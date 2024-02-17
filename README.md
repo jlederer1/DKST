@@ -6,4 +6,4 @@ Important components:
 - B) Losses specific to input projection of padded surmise relation (Q=2,..,5)
 - C) Vizualize knowledge structure embeddings
 - D) Normalization of counter-examples (todo)
-- F) Second embedding layer (todo)
+- E) Second embedding layer (todo)
