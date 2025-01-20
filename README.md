@@ -113,29 +113,7 @@ To install the required dependencies, follow these steps:
 
 ------------------ For collaborators ------------------
 
-## Building the Documentation
 
-To build the documentation, follow these steps:
-
-1. Ensure you have Sphinx installed:
-    ```sh
-    pip3 install sphinx
-    ```
-2. Navigate to the `docs` directory:
-    ```sh
-    cd docs
-    ```
-3. Build the documentation using the Makefile (on Unix-based systems):
-    ```sh
-    make clean
-    make html
-    ```
-   Or using the make.bat file (on Windows):
-    ```sh
-    .\make.bat html
-    ```
-
-The generated documentation can be accessed via `docs/build/html/index.html`.
 
 ## Installing Package in Editable Mode
 
@@ -161,4 +139,29 @@ To install the package in editable mode for development purposes, follow these s
     pip install -e .
     ```
 
+## Building the Documentation
 
+To build the documentation, follow these steps:
+
+1. Ensure you have Sphinx installed:
+    ```sh
+    pip3 install sphinx
+    ```
+2. Navigate to the `docs` directory:
+    ```sh
+    cd docs
+    ```
+3. Build the documentation using the Makefile (on Unix-based systems):
+    ```sh
+    make clean
+    make html
+    ```
+   Or using the make.bat file (on Windows):
+    ```sh
+    .\make.bat html
+    ```
+
+The generated documentation can be accessed via `docs/build/html/index.html`.
+Add your content using ``reStructuredText`` syntax to the .rst files. See the
+`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
+documentation for details.
