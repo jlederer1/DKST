@@ -12,5 +12,4 @@ dkst-env/
 docs/build/
 examples/
 .pytest_cache/
-setup.py 
 update_readme_version.py
