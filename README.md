@@ -1,4 +1,5 @@
 # DKST v0.1.0
+The documentation for this project is available at: [DKST Documentation](https://jlederer1.github.io/DKST/)
 
 ## Project structure 
 This package follows PyPI guidelines for structure, metadata, and documentation.
