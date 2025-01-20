@@ -20,7 +20,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install sphinx
           pip install -r requirements.txt
 
       - name: Build documentation

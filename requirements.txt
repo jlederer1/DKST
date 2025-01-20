@@ -7,3 +7,6 @@ matplotlib==3.9.2
 # Note: Install the appropriate version of PyTorch separately based on your system's capabilities, see README.
 
 # ipykernel for Jupyter notebooks in the examples folder...
+
+sphinx
+sphinx-rtd-theme
