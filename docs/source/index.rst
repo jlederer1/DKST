@@ -10,6 +10,7 @@ The **DKST (Deep Knowledge Structure Theory)** package offers a suite of tools f
 including quasi-orders and surmise relations. It combines elements of **Knowledge Structure Theory (KST)** and **Deep Learning (DL)** approaches for data-driven domain modelling.
 
 Package version:
+----------------
 .. include:: ../../VERSION
    :literal:
 
