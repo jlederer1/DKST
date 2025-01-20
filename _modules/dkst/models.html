@@ -1,0 +1,987 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dkst.models &mdash; dkst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            dkst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dkst.html">dkst package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">dkst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dkst.models</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dkst.models</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">DKST_datasets.py</span>
+
+<span class="sd">This module provides different types of torch modules for DKST models.</span>
+<span class="sd">As well as utility functions for training, inference and evaluation.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># imports </span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span> 
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tensor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+
+<div class="viewcode-block" id="PositionalEncoding">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.PositionalEncoding">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PositionalEncoding</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sinusoidal positional encoding for transformer models.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor for the PositionalEncoding class.</span>
+
+<span class="sd">        :param hidden_dim: latent dimension of transformer&#39;s token embeddings. </span>
+<span class="sd">        :type hidden_dim: int</span>
+<span class="sd">        :param max_len: maximum length of input sequences, defaults to 5000.</span>
+<span class="sd">        :type max_len: int</span>
+<span class="sd">        :param dropout_rate: dropout rate, defaults to 0.0.</span>
+<span class="sd">        :type dropout_rate: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PositionalEncoding</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">dropout_rate</span><span class="p">)</span>
+
+        <span class="c1"># calculate positional encodings once in log space</span>
+        <span class="n">pe</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">max_len</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">)</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_len</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">div_term</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">10000.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">hidden_dim</span><span class="p">))</span>
+        <span class="n">pe</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">position</span> <span class="o">*</span> <span class="n">div_term</span><span class="p">)</span>
+        <span class="n">pe</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">position</span> <span class="o">*</span> <span class="n">div_term</span><span class="p">)</span>
+        <span class="n">pe</span> <span class="o">=</span> <span class="n">pe</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;pe&#39;</span><span class="p">,</span> <span class="n">pe</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PositionalEncoding.forward">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.PositionalEncoding.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># add positional encodings to input</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pe</span><span class="p">[:,:</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+</div>
+
+
+<div class="viewcode-block" id="CustomTransformerDecoderLayer">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.CustomTransformerDecoderLayer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomTransformerDecoderLayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">TransformerDecoderLayer</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Customized torch transformer decoder layer.</span>
+<span class="sd">    Provides axcess to attention weights.</span>
+<span class="sd">    Uses MultiheadAttention for both self-attention and cross-attention.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">nhead</span><span class="p">,</span> <span class="n">dim_feedforward</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+                 <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;relu&quot;</span><span class="p">,</span> <span class="n">layer_norm_eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">norm_first</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor for the CustomTransformerDecoderLayer.</span>
+
+<span class="sd">        :param d_model: Number of latent dimensions to encode the input sequence. </span>
+<span class="sd">        :type d_model: int</span>
+<span class="sd">        :param nhead: Number of attention heads.</span>
+<span class="sd">        :type nhead: int</span>
+<span class="sd">        :param dim_feedforward: Dimension of the feedforward network model.</span>
+<span class="sd">        :type dim_feedforward: int</span>
+<span class="sd">        :param dropout: Dropout value.</span>
+<span class="sd">        :type dropout: float</span>
+<span class="sd">        :param activation: Non-linear activation function of transformer&#39;s feedforward layer, such as torch.nn.ReLU</span>
+<span class="sd">        :type activation: torch.nn activation function</span>
+<span class="sd">        :param layer_norm_eps: Epsilon value for layer normalization.</span>
+<span class="sd">        :type layer_norm_eps: float</span>
+<span class="sd">        :param batch_first: Whether the data is provided in batch first format, at default sequence dimension comes first.</span>
+<span class="sd">        :type batch_first: bool</span>
+<span class="sd">        :param norm_first: Whether normalization is applied before attention, at default normalization is applied after attention.</span>
+<span class="sd">        :type norm_first: bool</span>
+<span class="sd">        :param bias: Model bias.</span>
+<span class="sd">        :type bias: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">nhead</span><span class="p">,</span> <span class="n">dim_feedforward</span><span class="p">,</span> <span class="n">dropout</span><span class="p">,</span> <span class="n">activation</span><span class="p">,</span>
+                         <span class="n">layer_norm_eps</span><span class="p">,</span> <span class="n">batch_first</span><span class="p">,</span> <span class="n">norm_first</span><span class="p">,</span> <span class="n">bias</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_model</span> <span class="o">=</span> <span class="n">d_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nhead</span> <span class="o">=</span> <span class="n">nhead</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim_feedforward</span> <span class="o">=</span> <span class="n">dim_feedforward</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout_value</span> <span class="o">=</span> <span class="n">dropout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">activation_function</span> <span class="o">=</span> <span class="n">activation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_first</span> <span class="o">=</span> <span class="n">batch_first</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_first</span> <span class="o">=</span> <span class="n">norm_first</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dropout_value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">self_attn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MultiheadAttention</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">nhead</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">multihead_attn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MultiheadAttention</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">nhead</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CustomTransformerDecoderLayer.forward">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.CustomTransformerDecoderLayer.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tgt</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">memory</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+                <span class="n">tgt_mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">memory_mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">tgt_key_padding_mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">memory_key_padding_mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">need_weights</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="c1"># Adjust for batch_first option if necessary</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_first</span><span class="p">:</span>
+            <span class="n">tgt</span> <span class="o">=</span> <span class="n">tgt</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">memory</span> <span class="o">=</span> <span class="n">memory</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Self attention</span>
+        <span class="c1"># Attention weights have the shape (batch_size,num_heads,tgt_seq_len,in_seq_len) since wheights are not averaged</span>
+        <span class="n">tgt2</span><span class="p">,</span> <span class="n">self_attn_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_attn</span><span class="p">(</span><span class="n">tgt</span><span class="p">,</span> <span class="n">tgt</span><span class="p">,</span> <span class="n">tgt</span><span class="p">,</span> <span class="n">attn_mask</span><span class="o">=</span><span class="n">tgt_mask</span><span class="p">,</span>
+                                                 <span class="n">key_padding_mask</span><span class="o">=</span><span class="n">tgt_key_padding_mask</span><span class="p">,</span>
+                                                 <span class="n">need_weights</span><span class="o">=</span><span class="n">need_weights</span><span class="p">,</span> <span class="n">average_attn_weights</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">tgt</span> <span class="o">=</span> <span class="n">tgt</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout1</span><span class="p">(</span><span class="n">tgt2</span><span class="p">)</span>
+        <span class="n">tgt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm1</span><span class="p">(</span><span class="n">tgt</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_first</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm1</span><span class="p">(</span><span class="n">tgt</span><span class="p">)</span>
+
+        <span class="c1"># Multi-head attention                 </span>
+        <span class="n">tgt2</span><span class="p">,</span> <span class="n">multihead_attn_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">multihead_attn</span><span class="p">(</span><span class="n">tgt</span><span class="p">,</span> <span class="n">memory</span><span class="p">,</span> <span class="n">memory</span><span class="p">,</span> <span class="n">attn_mask</span><span class="o">=</span><span class="n">memory_mask</span><span class="p">,</span>
+                                                           <span class="n">key_padding_mask</span><span class="o">=</span><span class="n">memory_key_padding_mask</span><span class="p">,</span>
+                                                           <span class="n">need_weights</span><span class="o">=</span><span class="n">need_weights</span><span class="p">,</span> <span class="n">average_attn_weights</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">tgt</span> <span class="o">=</span> <span class="n">tgt</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout2</span><span class="p">(</span><span class="n">tgt2</span><span class="p">)</span>
+        <span class="n">tgt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm2</span><span class="p">(</span><span class="n">tgt</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_first</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm2</span><span class="p">(</span><span class="n">tgt</span><span class="p">)</span>
+
+        <span class="c1"># Feedforward network</span>
+        <span class="n">tgt2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">linear1</span><span class="p">(</span><span class="n">tgt</span><span class="p">))))</span>
+        <span class="n">tgt</span> <span class="o">=</span> <span class="n">tgt</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout3</span><span class="p">(</span><span class="n">tgt2</span><span class="p">)</span>
+        <span class="n">tgt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm3</span><span class="p">(</span><span class="n">tgt</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_first</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm3</span><span class="p">(</span><span class="n">tgt</span><span class="p">)</span>
+
+        <span class="c1"># Adjust for batch_first option if necessary</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_first</span><span class="p">:</span>
+            <span class="n">tgt</span> <span class="o">=</span> <span class="n">tgt</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">tgt</span><span class="p">,</span> <span class="n">self_attn_weights</span><span class="p">,</span> <span class="n">multihead_attn_weights</span></div>
+</div>
+
+    
+<div class="viewcode-block" id="CustomTransformerDecoder">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.CustomTransformerDecoder">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomTransformerDecoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">TransformerDecoder</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Customized torch transformer decoder.</span>
+<span class="sd">    Provides axcess to attention weights.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decoder_layer</span><span class="p">,</span> <span class="n">num_layers</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor for the CustomTransformerDecoder.</span>
+
+<span class="sd">        :param decoder_layer: Customized transformer decoder layer.</span>
+<span class="sd">        :type decoder_layer: CustomTransformerDecoderLayer</span>
+<span class="sd">        :param num_layers: Number of decoder layers.</span>
+<span class="sd">        :type num_layers: int</span>
+<span class="sd">        :param norm: Normalization layer, at default layer normalization is applied.</span>
+<span class="sd">        :type norm: torch.nn.LayerNorm</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">decoder_layer</span><span class="p">,</span> <span class="n">num_layers</span><span class="p">,</span> <span class="n">norm</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span><span class="n">CustomTransformerDecoderLayer</span><span class="p">(</span>
+            <span class="n">d_model</span><span class="o">=</span><span class="n">decoder_layer</span><span class="o">.</span><span class="n">d_model</span><span class="p">,</span>
+            <span class="n">nhead</span><span class="o">=</span><span class="n">decoder_layer</span><span class="o">.</span><span class="n">nhead</span><span class="p">,</span>
+            <span class="n">dim_feedforward</span><span class="o">=</span><span class="n">decoder_layer</span><span class="o">.</span><span class="n">dim_feedforward</span><span class="p">,</span>
+            <span class="n">dropout</span><span class="o">=</span><span class="n">decoder_layer</span><span class="o">.</span><span class="n">dropout_value</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="n">decoder_layer</span><span class="o">.</span><span class="n">activation_function</span>
+        <span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span><span class="p">)])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span> <span class="o">=</span> <span class="n">num_layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="n">norm</span> <span class="k">if</span> <span class="n">norm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">decoder_layer</span><span class="o">.</span><span class="n">d_model</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CustomTransformerDecoder.forward">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.CustomTransformerDecoder.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tgt</span><span class="p">,</span> <span class="n">memory</span><span class="p">,</span>
+                <span class="n">tgt_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">memory_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">tgt_key_padding_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">memory_key_padding_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward pass through the transformer decoder.</span>
+
+<span class="sd">        :param tgt: Target sequence of shape (seq_length, batch_size, d_model).</span>
+<span class="sd">        :type tgt: torch.Tensor</span>
+<span class="sd">        :param memory: Memory from the encoder of shape (seq_length, batch_size, d_model).</span>
+<span class="sd">        :type memory: torch.Tensor</span>
+<span class="sd">        :param tgt_mask: Mask for the target sequence, optional.</span>
+<span class="sd">        :type tgt_mask: Optional[torch.Tensor]</span>
+<span class="sd">        :param memory_mask: Mask for the memory sequence, optional.</span>
+<span class="sd">        :type memory_mask: Optional[torch.Tensor]</span>
+<span class="sd">        :param tgt_key_padding_mask: Padding mask for the target keys, optional.</span>
+<span class="sd">        :type tgt_key_padding_mask: Optional[torch.Tensor]</span>
+<span class="sd">        :param memory_key_padding_mask: Padding mask for the memory keys, optional.</span>
+<span class="sd">        :type memory_key_padding_mask: Optional[torch.Tensor]</span>
+<span class="sd">        :return: Output sequence of shape (seq_length, batch_size, d_model) and list of attention weights, each of shape (batch_size, num_heads, seq_length, seq_length).</span>
+<span class="sd">        :rtype: tuple(torch.Tensor, list[torch.Tensor])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">tgt</span>
+
+        <span class="n">attention_wheights</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># List to store attention weights for network diagnostics.</span>
+
+        <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">,</span> <span class="n">self_attn_weights</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">mod</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">memory</span><span class="p">,</span> <span class="n">tgt_mask</span><span class="o">=</span><span class="n">tgt_mask</span><span class="p">,</span>
+                                               <span class="n">memory_mask</span><span class="o">=</span><span class="n">memory_mask</span><span class="p">,</span>
+                                               <span class="n">tgt_key_padding_mask</span><span class="o">=</span><span class="n">tgt_key_padding_mask</span><span class="p">,</span>
+                                               <span class="n">memory_key_padding_mask</span><span class="o">=</span><span class="n">memory_key_padding_mask</span><span class="p">)</span>
+            <span class="n">attention_wheights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">self_attn_weights</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="n">attention_wheights</span></div>
+</div>
+
+
+<div class="viewcode-block" id="CustomDecoderModel">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.CustomDecoderModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomDecoderModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Customized transformer decoder model for Knowledge Net.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor for the CustomDecoderModel class.</span>
+
+<span class="sd">        :param config_path: Path to the configuration file.</span>
+<span class="sd">        :type config_path: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CustomDecoderModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">config_path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Config file not found at </span><span class="si">{</span><span class="n">config_path</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">config_path</span><span class="p">))</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">m_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_type</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">torch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;d_type&#39;</span><span class="p">])</span> <span class="c1"># retrieve dtype based on config string </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">]</span> <span class="c1"># observations about 2**m possible states</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="c1"># number of states + eos and pad tokens</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_seq_len</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">-</span> <span class="mi">1</span> <span class="c1"># num_states + eos token</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;hidden_dim&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_heads</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;n_heads&#39;</span><span class="p">]</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_layers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;n_layers&#39;</span><span class="p">]</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;dropout&#39;</span><span class="p">]</span>  
+        <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;activation&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout_layer</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dropout_value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pos_encoder</span> <span class="o">=</span> <span class="n">PositionalEncoding</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_seq_len</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dropout_value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder_layer</span> <span class="o">=</span> <span class="n">CustomTransformerDecoderLayer</span><span class="p">(</span><span class="n">d_model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">nhead</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_heads</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dropout_value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformer_decoder</span> <span class="o">=</span> <span class="n">CustomTransformerDecoder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decoder_layer</span><span class="p">,</span> <span class="n">num_layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_layers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="c1"># exclude padding token from generation</span>
+
+<div class="viewcode-block" id="CustomDecoderModel.forward">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.CustomDecoderModel.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conditionals</span><span class="p">,</span> <span class="n">input_seq</span><span class="p">,</span> <span class="n">data_embedding</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward pass through the transformer decoder.</span>
+<span class="sd">        Output shapes are as follows:</span>
+<span class="sd">        - Output sequence: (seq_len, batch_size, vocab_size+1)</span>
+<span class="sd">        - Data embedding: (batch_size, hidden_dim)</span>
+<span class="sd">        - Attention weights: list of length n_layers, each element is a tensor of self-attention wheights of shape (batch_size, num_heads, seq_length, seq_length).</span>
+
+<span class="sd">        :param conditionals: Tensor of conditional probabilities of shape (batch_size, 2**m).</span>
+<span class="sd">        :type conditionals: torch.Tensor</span>
+<span class="sd">        :param input_seq: Input sequence as tensor of shape (batch_size, seq_length).</span>
+<span class="sd">        :type input_seq: torch.Tensor</span>
+<span class="sd">        :param data_embedding: Data embedding, defaults to None, shape (batch_size, hidden_dim).</span>
+<span class="sd">        :type data_embedding: torch.Tensor</span>
+<span class="sd">        :return: Output sequence (seq_len, batch_size, vocab_size+1), data embedding (batch_size, hidden_dim), attention weights (list ).</span>
+<span class="sd">        :rtype: tuple</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">conditionals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">seq_length</span> <span class="o">=</span> <span class="n">input_seq</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">input_seq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span><span class="p">(</span><span class="n">input_seq</span><span class="p">)</span>
+        <span class="n">input_seq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_encoder</span><span class="p">(</span><span class="n">input_seq</span><span class="p">)</span>
+        <span class="n">input_seq</span> <span class="o">=</span> <span class="n">input_seq</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+
+        <span class="c1"># projection into latent space (memory cell)</span>
+        <span class="k">if</span> <span class="n">data_embedding</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">K_embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_proj</span><span class="p">(</span><span class="n">conditionals</span><span class="p">)</span>
+            <span class="c1">#K_embedding = self.dropout_layer(K_embedding) # Do not use, interferes with ln_loss during training.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">K_embedding</span> <span class="o">=</span> <span class="n">data_embedding</span>
+        <span class="n">memory</span> <span class="o">=</span> <span class="n">K_embedding</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span><span class="p">)</span>
+        
+        <span class="n">memory</span> <span class="o">=</span> <span class="n">memory</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="c1"># memory.repeat(1, 1, 1).float()</span>
+
+        <span class="c1"># masking decoder&#39;s self-attention mechanism</span>
+        <span class="n">tgt_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">seq_length</span><span class="p">,</span> <span class="n">seq_length</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;-inf&#39;</span><span class="p">),</span> <span class="n">diagonal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">input_seq</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        
+        <span class="c1"># forward pass through transformer</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">attention_wheights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformer_decoder</span><span class="p">(</span><span class="n">tgt</span><span class="o">=</span><span class="n">input_seq</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="n">memory</span><span class="p">,</span> <span class="n">tgt_mask</span><span class="o">=</span><span class="n">tgt_mask</span><span class="p">,</span> <span class="n">memory_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_proj</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="n">K_embedding</span><span class="p">,</span> <span class="n">attention_wheights</span>
+    
+    <span class="c1"># def forward(self, conditionals, input_seq, data_embedding=None):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward pass through the transformer decoder.</span>
+
+<span class="sd">        :param conditionals: Tensor of conditional probabilities.</span>
+<span class="sd">        :type conditionals: torch.Tensor</span>
+<span class="sd">        :param input_seq: Input sequence.</span>
+<span class="sd">        :type input_seq: torch.Tensor</span>
+<span class="sd">        :param data_embedding: Data embedding, defaults to None.</span>
+<span class="sd">        :type data_embedding: torch.Tensor</span>
+<span class="sd">        :return: Output sequence, data embedding, attention weights.</span>
+<span class="sd">        :rtype: tuple</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">conditionals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">seq_length</span> <span class="o">=</span> <span class="n">input_seq</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">input_seq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span><span class="p">(</span><span class="n">input_seq</span><span class="p">)</span>
+        <span class="n">input_seq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_encoder</span><span class="p">(</span><span class="n">input_seq</span><span class="p">)</span>
+        <span class="n">input_seq</span> <span class="o">=</span> <span class="n">input_seq</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+
+        <span class="c1"># projection into latent space (memory cell)</span>
+        <span class="k">if</span> <span class="n">data_embedding</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">K_embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_proj</span><span class="p">(</span><span class="n">conditionals</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">K_embedding</span> <span class="o">=</span> <span class="n">data_embedding</span>
+        <span class="n">memory</span> <span class="o">=</span> <span class="n">K_embedding</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span><span class="p">)</span>
+        
+        <span class="n">memory</span> <span class="o">=</span> <span class="n">memory</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="c1"># memory.repeat(1, 1, 1).float()</span>
+
+        <span class="c1"># masking decoder&#39;s self-attention mechanism</span>
+        <span class="n">tgt_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">seq_length</span><span class="p">,</span> <span class="n">seq_length</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;-inf&#39;</span><span class="p">),</span> <span class="n">diagonal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">input_seq</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        
+        <span class="c1"># forward pass through transformer</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">attention_wheights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformer_decoder</span><span class="p">(</span><span class="n">tgt</span><span class="o">=</span><span class="n">input_seq</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="n">memory</span><span class="p">,</span> <span class="n">tgt_mask</span><span class="o">=</span><span class="n">tgt_mask</span><span class="p">,</span> <span class="n">memory_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_proj</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="n">K_embedding</span><span class="p">,</span> <span class="n">attention_wheights</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RegressionNetwork">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.RegressionNetwork">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RegressionNetwork</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Regressor for response pattern aggregates by frequency.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_size</span><span class="p">,</span> <span class="n">hidden_size1</span><span class="p">,</span> <span class="n">hidden_size2</span><span class="p">,</span> <span class="n">output_size</span><span class="p">,</span> <span class="n">dropout_val</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor for the RegressionNetwork class.</span>
+<span class="sd">        </span>
+<span class="sd">        :param input_size: Number of input features.</span>
+<span class="sd">        :type input_size: int</span>
+<span class="sd">        :param hidden_size1: Number of neurons in the first hidden layer.</span>
+<span class="sd">        :type hidden_size1: int</span>
+<span class="sd">        :param hidden_size2: Number of neurons in the second hidden layer.</span>
+<span class="sd">        :type hidden_size2: int</span>
+<span class="sd">        :param output_size: Number of output features.</span>
+<span class="sd">        :type output_size: int</span>
+<span class="sd">        :param dropout_val: Dropout value.</span>
+<span class="sd">        :type dropout_val: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">RegressionNetwork</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># Define fully connected layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">hidden_size1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size1</span><span class="p">,</span> <span class="n">hidden_size2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc3</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size2</span><span class="p">,</span> <span class="n">output_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout_val</span><span class="p">)</span>
+        <span class="c1"># self.bn1 = nn.BatchNorm1d(hidden_size1)</span>
+
+<div class="viewcode-block" id="RegressionNetwork.forward">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.RegressionNetwork.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># Apply the first fully connected layers with ReLU activation</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fc1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> 
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fc2</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> 
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="c1"># Linear activation for regression</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc3</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+</div>
+
+
+<div class="viewcode-block" id="CustomCELoss">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.CustomCELoss">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomCELoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom Cross-Entropy Loss with label smoothing and padding token masking.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_smoothing</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor for the CustomCELoss class.</span>
+
+<span class="sd">        :param label_smoothing: Smoothing factor for label smoothing, defaults to 0.</span>
+<span class="sd">        :type label_smoothing: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CustomCELoss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_smoothing</span> <span class="o">=</span> <span class="n">label_smoothing</span>
+
+<div class="viewcode-block" id="CustomCELoss.forward">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.CustomCELoss.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward pass for the CustomCELoss class.</span>
+
+<span class="sd">        :param output: Predicted output tensor of shape (seq_length, batch_size, vocab_size).</span>
+<span class="sd">        :type output: torch.Tensor</span>
+<span class="sd">        :param labels: Ground truth labels tensor of shape (batch_size, seq_length).</span>
+<span class="sd">        :type labels: torch.Tensor</span>
+<span class="sd">        :return: Averaged cross-entropy loss over non-padding tokens.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Identify padding tokens</span>
+        <span class="n">pad_token_id</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        
+        <span class="c1"># Permute output to match the expected shape for cross-entropy loss</span>
+        <span class="n">output_flat</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        
+        <span class="c1"># Create a mask to ignore padding tokens</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">labels</span> <span class="o">!=</span> <span class="n">pad_token_id</span><span class="p">)</span>
+
+        <span class="c1"># Compute cross-entropy loss for each predicted token</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">output_flat</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="n">pad_token_id</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">label_smoothing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">label_smoothing</span><span class="p">)</span>
+        
+        <span class="c1"># Apply mask to the loss</span>
+        <span class="n">masked_loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">*</span> <span class="n">mask</span>
+
+        <span class="c1"># Average the loss over non-padding tokens</span>
+        <span class="n">averaged_loss</span> <span class="o">=</span> <span class="n">masked_loss</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">mask</span><span class="o">.</span><span class="n">long</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        
+        <span class="k">return</span> <span class="n">averaged_loss</span></div>
+</div>
+
+
+<div class="viewcode-block" id="LengthNormLoss">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.LengthNormLoss">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LengthNormLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Length-Norm-Loss: Evaluates the alignment between hidden representation&#39;s norms and sequence lengths using MSE.</span>
+<span class="sd">    Regularizes K-net&#39;s training and embedding space.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor for the LengthNormLoss class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">LengthNormLoss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="LengthNormLoss.forward">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.LengthNormLoss.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward pass for the LengthLoss class.</span>
+
+<span class="sd">        :param embeddings: Hidden representations for each sample per batch.</span>
+<span class="sd">        :type embedding_norms: torch.Tensor</span>
+<span class="sd">        :param targets: Ground truth labels tensor of shape (batch_size, seq_length).</span>
+<span class="sd">        :type targets: torch.Tensor</span>
+<span class="sd">        :return: Length-Norm-Loss.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">embedding_norms</span> <span class="o">=</span> <span class="n">embeddings</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># Calculate sequence lengths</span>
+        <span class="n">seq_lengths</span> <span class="o">=</span> <span class="p">((</span><span class="n">targets</span> <span class="o">!=</span> <span class="n">vocab_size</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span>                      <span class="c1"># Exclude padding token ids</span>
+                       <span class="p">(</span><span class="n">targets</span> <span class="o">!=</span> <span class="n">vocab_size</span><span class="o">-</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>    <span class="c1"># Exclude eos token ids</span>
+        
+        <span class="c1"># Calculate LNLoss</span>
+        <span class="n">lnloss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">embedding_norms</span><span class="p">,</span> <span class="n">seq_lengths</span><span class="p">)</span> 
+        <span class="k">return</span> <span class="n">lnloss</span></div>
+</div>
+
+
+<span class="c1"># class K_net_v02(nn.Module):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Knowledge-Net version 2, K-to-K transformer architecture.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     def __init__(self, config_path):</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         Constructor for the K_net_v02 class.</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         pass</span>
+
+<div class="viewcode-block" id="train">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.train">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">ce_loss</span><span class="p">,</span> <span class="n">ln_loss</span><span class="p">,</span> <span class="n">ln_wheight</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">penalty_weight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">clip_norm</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">knet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;mps&quot;</span><span class="p">,</span> <span class="n">prediction_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Train K-net/decoder model for one epoch.</span>
+<span class="sd">    Uses projection of conditional probabilities to hidden space in K-net training phase 1 (reconstruction).</span>
+<span class="sd">    Uses regressor&#39;s projection of data observations to hidden space in K-net training phase 2 (prediction).</span>
+
+<span class="sd">    :param model: Decoder model to train.</span>
+<span class="sd">    :type model: nn.Module</span>
+<span class="sd">    :param train_loader: DataLoader for the training data.</span>
+<span class="sd">    :type train_loader: torch.utils.data.DataLoader</span>
+<span class="sd">    :param ce_loss: Custom cross-entropy loss function.</span>
+<span class="sd">    :type ce_loss: callable</span>
+<span class="sd">    :param ln_loss: Custom Length-Norm-Loss function for extra regularization.</span>
+<span class="sd">    :type ln_loss: callable</span>
+<span class="sd">    :param ln_wheight: Weighting for the Length-Norm-Loss, range [0,1].</span>
+<span class="sd">    :type ln_wheight: float</span>
+<span class="sd">    :param optimizer: Optimizer for updating model parameters.</span>
+<span class="sd">    :type optimizer: torch.optim.Optimizer</span>
+<span class="sd">    :param clip_norm: Maximum norm for gradient clipping to prevent exploding gradients, defaults to 0, may be chosen in range [0,5] (?).</span>
+<span class="sd">    :type clip_norm: float</span>
+<span class="sd">    :param knet: Knowledge-Net model, determines the training phase.</span>
+<span class="sd">    :type knet: nn.Module, optional</span>
+<span class="sd">    :param prediction_only: If True, only perform projection into latent space, no decoding, defaults to False.</span>
+<span class="sd">    :type prediction_only: bool, optional</span>
+
+<span class="sd">    :return: Tuple containing training metrics of entire epoch, average cross-entropy loss, average Length-Norm-Loss, and the combined loss.</span>
+<span class="sd">    :rtype: tuple(float, float, float)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">knet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">prediction_only</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span> <span class="n">knet</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="n">total_loss_CE</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">total_loss_LN</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">total_loss_penalty</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">total_loss_combiened</span> <span class="o">=</span> <span class="mf">0.</span>
+
+    <span class="k">for</span> <span class="n">conditionals</span><span class="p">,</span> <span class="n">input_seq</span><span class="p">,</span> <span class="n">target_seq</span><span class="p">,</span> <span class="n">input_obs</span> <span class="ow">in</span> <span class="n">train_loader</span><span class="p">:</span>
+        <span class="c1"># Move tensors to the correct device</span>
+        <span class="n">conditionals</span> <span class="o">=</span> <span class="n">conditionals</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">input_seq</span> <span class="o">=</span> <span class="n">input_seq</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">target_seq</span> <span class="o">=</span> <span class="n">target_seq</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">input_obs</span> <span class="o">=</span> <span class="n">input_obs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">conditionals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+        <span class="c1"># Flexible forward pass </span>
+        <span class="k">if</span> <span class="n">knet</span><span class="p">:</span>
+            <span class="c1">### To be implemented! ###</span>
+            <span class="c1">#output, embedding, attention_weights = knet(input_obs, input_seq)</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="n">output</span><span class="p">,</span> <span class="n">embedding</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">conditionals</span><span class="p">,</span> <span class="n">input_seq</span><span class="p">)</span>
+
+        <span class="c1"># Custom Cross-entropy loss (weighted)</span>
+        <span class="n">loss_ce</span> <span class="o">=</span> <span class="n">ce_loss</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">target_seq</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ln_wheight</span><span class="p">)</span> <span class="o">/</span> <span class="n">batch_size</span> <span class="c1"># Normalize loss by batch size </span>
+        <span class="n">total_loss_CE</span> <span class="o">+=</span> <span class="n">loss_ce</span>
+        <span class="c1"># Custom Length-Norm-Loss (wheighted)</span>
+        <span class="n">loss_ln</span> <span class="o">=</span> <span class="n">ln_loss</span><span class="p">(</span><span class="n">embedding</span><span class="p">,</span> <span class="n">target_seq</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">)</span> <span class="o">*</span> <span class="n">ln_wheight</span> <span class="o">/</span> <span class="n">batch_size</span>
+        <span class="n">total_loss_LN</span> <span class="o">+=</span> <span class="n">loss_ln</span> 
+        <span class="c1"># Penalty loss for dublicates in the output sequence</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">predicted_tokens</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Get token predictions</span>
+        <span class="c1"># (exclude padding/eos tokens from being counted as duplicates)</span>
+        <span class="n">non_padding_tokens</span> <span class="o">=</span> <span class="n">predicted_tokens</span><span class="p">[(</span><span class="n">predicted_tokens</span> <span class="o">!=</span> <span class="n">model</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">predicted_tokens</span> <span class="o">!=</span> <span class="n">model</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)]</span>
+        <span class="n">unique_counts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([(</span><span class="n">predicted_tokens</span> <span class="o">==</span> <span class="n">token</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">non_padding_tokens</span><span class="o">.</span><span class="n">unique</span><span class="p">()])</span>
+        <span class="n">repeat_loss</span> <span class="o">=</span> <span class="n">penalty_weight</span> <span class="o">*</span> <span class="n">unique_counts</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="n">batch_size</span>  <span class="c1"># Cast to float</span>
+        <span class="n">total_loss_penalty</span> <span class="o">+=</span> <span class="n">repeat_loss</span>
+        <span class="c1"># Total loss</span>
+        <span class="n">loss_combined</span> <span class="o">=</span> <span class="n">loss_ce</span> <span class="o">+</span> <span class="n">loss_ln</span> <span class="o">+</span> <span class="n">repeat_loss</span>
+        <span class="n">total_loss_combiened</span> <span class="o">+=</span> <span class="n">loss_combined</span>
+        
+        <span class="c1"># Backward pass</span>
+        <span class="n">loss_combined</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">clip_grad_norm_</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">clip_norm</span><span class="p">)</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+    <span class="c1"># Calculate training statistics for current epoch</span>
+    <span class="n">mean_ce</span> <span class="o">=</span> <span class="n">total_loss_CE</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_loader</span><span class="p">)</span>
+    <span class="n">mean_ln</span> <span class="o">=</span> <span class="n">total_loss_LN</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_loader</span><span class="p">)</span>
+    <span class="n">mean_combined</span> <span class="o">=</span> <span class="n">total_loss_combiened</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_loader</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mean_ce</span><span class="p">,</span> <span class="n">mean_ln</span><span class="p">,</span> <span class="n">mean_combined</span></div>
+
+
+<div class="viewcode-block" id="eval">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.eval">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">eval_loader</span><span class="p">,</span> <span class="n">ce_loss</span><span class="p">,</span> <span class="n">ln_loss</span><span class="p">,</span> <span class="n">ln_wheight</span><span class="p">,</span> <span class="n">penalty_weight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">knet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;mps&quot;</span><span class="p">,</span> <span class="n">prediction_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate K-net/decoder model for one epoch.</span>
+
+<span class="sd">    :param model: Decoder model to evaluate.</span>
+<span class="sd">    :type model: nn.Module</span>
+<span class="sd">    :param eval_loader: DataLoader for the evaluation data.</span>
+<span class="sd">    :type eval_loader: torch.utils.data.DataLoader</span>
+<span class="sd">    :param ce_loss: Custom cross-entropy loss function.</span>
+<span class="sd">    :type ce_loss: callable</span>
+<span class="sd">    :param ln_loss: Custom Length-Norm-Loss function for extra regularization.</span>
+<span class="sd">    :type ln_loss: callable</span>
+<span class="sd">    :param ln_wheight: Weighting for the Length-Norm-Loss, range [0,1].</span>
+<span class="sd">    :type ln_wheight: float</span>
+<span class="sd">    :param penalty_weight: Weighting for the penalty loss, defaults to 0.</span>
+<span class="sd">    :type penalty_weight: float</span>
+<span class="sd">    :param knet: Knowledge-Net model, determines the training phase.</span>
+<span class="sd">    :type knet: nn.Module, optional</span>
+<span class="sd">    :param prediction_only: If True, only perform projection into latent space, no decoding, defaults to False.</span>
+<span class="sd">    :type prediction_only: bool, optional</span>
+
+<span class="sd">    :return: Tuple containing evaluation metrics of current epoch, average cross-entropy loss, average Length-Norm-Loss, and the combined loss.</span>
+<span class="sd">    :rtype: tuple(float, float, float)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">knet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">prediction_only</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">knet</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+    <span class="n">total_loss_CE</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">total_loss_LN</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">total_loss_penalty</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">total_loss_combined</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">conditionals</span><span class="p">,</span> <span class="n">input_seq</span><span class="p">,</span> <span class="n">target_seq</span><span class="p">,</span> <span class="n">input_obs</span>  <span class="ow">in</span> <span class="n">eval_loader</span><span class="p">:</span>
+            <span class="c1"># Move tensors to the correct device</span>
+            <span class="n">conditionals</span> <span class="o">=</span> <span class="n">conditionals</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">input_seq</span> <span class="o">=</span> <span class="n">input_seq</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">target_seq</span> <span class="o">=</span> <span class="n">target_seq</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">input_obs</span> <span class="o">=</span> <span class="n">input_obs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+            <span class="n">batch_size</span> <span class="o">=</span> <span class="n">conditionals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Flexible forward pass</span>
+            <span class="k">if</span> <span class="n">knet</span><span class="p">:</span>
+                <span class="c1">### To be implemented! ###</span>
+                <span class="c1">#output, embedding, attention_weights = knet(input_obs, input_seq)</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">output</span><span class="p">,</span> <span class="n">embedding</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">conditionals</span><span class="p">,</span> <span class="n">input_seq</span><span class="p">)</span>
+
+            <span class="c1"># Custom Cross-entropy loss (weighted)</span>
+            <span class="n">loss_ce</span> <span class="o">=</span> <span class="n">ce_loss</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">target_seq</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ln_wheight</span><span class="p">)</span> <span class="o">/</span> <span class="n">batch_size</span> 
+            <span class="n">total_loss_CE</span> <span class="o">+=</span> <span class="n">loss_ce</span>
+            <span class="c1"># Custom Length-Norm-Loss (wheighted)</span>
+            <span class="n">loss_ln</span> <span class="o">=</span> <span class="n">ln_loss</span><span class="p">(</span><span class="n">embedding</span><span class="p">,</span> <span class="n">target_seq</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">)</span> <span class="o">*</span> <span class="n">ln_wheight</span> <span class="o">/</span> <span class="n">batch_size</span>
+            <span class="n">total_loss_LN</span> <span class="o">+=</span> <span class="n">loss_ln</span> 
+            <span class="c1"># Penalty loss for dublicates in the output sequence</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">predicted_tokens</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Get token predictions</span>
+            <span class="n">non_padding_tokens</span> <span class="o">=</span> <span class="n">predicted_tokens</span><span class="p">[(</span><span class="n">predicted_tokens</span> <span class="o">!=</span> <span class="n">model</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">predicted_tokens</span> <span class="o">!=</span> <span class="n">model</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)]</span>
+            <span class="n">unique_counts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([(</span><span class="n">predicted_tokens</span> <span class="o">==</span> <span class="n">token</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">non_padding_tokens</span><span class="o">.</span><span class="n">unique</span><span class="p">()])</span>
+            <span class="n">repeat_loss</span> <span class="o">=</span> <span class="n">penalty_weight</span> <span class="o">*</span> <span class="n">unique_counts</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="n">batch_size</span>  <span class="c1"># Cast to float</span>
+            <span class="n">total_loss_penalty</span> <span class="o">+=</span> <span class="n">repeat_loss</span>
+            <span class="c1"># Total loss</span>
+            <span class="n">loss_combined</span> <span class="o">=</span> <span class="n">loss_ce</span> <span class="o">+</span> <span class="n">loss_ln</span> <span class="o">+</span> <span class="n">repeat_loss</span>
+            <span class="n">total_loss_combined</span> <span class="o">+=</span> <span class="n">loss_combined</span>
+
+    <span class="c1"># Calculate evaluation statistics for current epoch</span>
+    <span class="n">mean_ce</span> <span class="o">=</span> <span class="n">total_loss_CE</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">eval_loader</span><span class="p">)</span>
+    <span class="n">mean_ln</span> <span class="o">=</span> <span class="n">total_loss_LN</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">eval_loader</span><span class="p">)</span>
+    <span class="n">mean_combined</span> <span class="o">=</span> <span class="n">total_loss_combined</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">eval_loader</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mean_ce</span><span class="p">,</span> <span class="n">mean_ln</span><span class="p">,</span> <span class="n">mean_combined</span></div>
+
+
+<div class="viewcode-block" id="generate_sequence">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.generate_sequence">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_sequence</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">conditionals</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;mps&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_embedding</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a sequence of knowledge states using a trained decoder model.</span>
+<span class="sd">    Predicts a knowledge structure from data observations or reconstructs K from response data observations.</span>
+
+<span class="sd">    :param model: Trained decoder model.</span>
+<span class="sd">    :type model: nn.Module</span>
+<span class="sd">    :param conditionals: Conditional probabilities of underlying parametarized knowledge structure.</span>
+<span class="sd">    :type conditionals: torch.Tensor</span>
+<span class="sd">    :param device: Device to use for inference, defaults to &quot;mps&quot;.</span>
+<span class="sd">    :type device: str</span>
+<span class="sd">    :param max_length: Maximum length of the generated sequence, defaults to the maximum possible sequence length of identified domain.</span>
+<span class="sd">    :type max_length: int, optional</span>
+<span class="sd">    :param data_embedding: Data embedding, defaults to None.</span>
+<span class="sd">    :type data_embedding: torch.Tensor, optional</span>
+
+<span class="sd">    :return: Tuple containing the generated sequence and corresponding embedding.</span>
+<span class="sd">    :rtype: tuple(list, torch.Tensor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">max_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">max_length</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">model</span><span class="o">.</span><span class="n">m_items</span> <span class="o">+</span> <span class="mi">1</span> <span class="c1"># maximum seq length</span>
+    
+    <span class="c1"># Initialize generated sequence with index of start token </span>
+    <span class="n">generated_sequence</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># zero for empty state </span>
+
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="c1"># iteratively generate the output sequence </span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_length</span><span class="p">):</span>
+            <span class="c1"># generated sequence so far to tensor</span>
+            <span class="n">current_seq</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">generated_sequence</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+            <span class="c1"># Predict the next token</span>
+            <span class="n">output</span><span class="p">,</span> <span class="n">embedding</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">conditionals</span><span class="p">,</span> <span class="n">current_seq</span><span class="p">,</span> <span class="n">data_embedding</span><span class="o">=</span><span class="n">data_embedding</span><span class="p">)</span>
+
+            <span class="c1">#self_attention = attention[0].cpu()</span>
+            <span class="c1">#attention_weights += [self_attention[0,-1,:]]</span>
+            
+            <span class="c1"># add newly predicted token to sequence </span>
+            <span class="n">next_token_id</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="n">generated_sequence</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_token_id</span><span class="p">)</span>
+            
+            <span class="c1"># Break if EOS token is generated</span>
+            <span class="k">if</span> <span class="n">next_token_id</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">-</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">break</span>
+
+    <span class="k">return</span> <span class="n">generated_sequence</span><span class="p">,</span> <span class="n">embedding</span></div>
+
+
+
+<span class="c1"># To do: pass regressor instead of embedding to generate_sequence_(MCDP), so embeddings are repreatedly computed, too, if dropout in projection layers (?)</span>
+<span class="c1"># To do: consider flexibly handling batched/unbatched data? </span>
+<div class="viewcode-block" id="generate_sequence_MCDP">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.generate_sequence_MCDP">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_sequence_MCDP</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span> <span class="c1"># ensure correct device</span>
+    <span class="n">conditionals</span><span class="p">,</span> <span class="c1"># ensure correct device</span>
+    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;mps&quot;</span><span class="p">,</span> 
+    <span class="n">max_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+    <span class="n">data_embedding</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+    <span class="n">n_mc_samples</span><span class="o">=</span><span class="mi">5</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a sequence of knowledge states using a trained decoder model with Monte Carlo Dropout (MCDP).</span>
+<span class="sd">    Predicts a knowledge structure from data observations or reconstructs K from response data observations.</span>
+
+<span class="sd">    :param model: Trained decoder model.</span>
+<span class="sd">    :type model: nn.Module</span>
+<span class="sd">    :param conditionals: Conditional probabilities of underlying parametarized knowledge structure.</span>
+<span class="sd">    :type conditionals: torch.Tensor</span>
+<span class="sd">    :param device: Device to use for inference, defaults to &quot;mps&quot;.</span>
+<span class="sd">    :type device: str</span>
+<span class="sd">    :param max_length: Maximum length of the generated sequence, defaults to the maximum possible sequence length of identified domain.</span>
+<span class="sd">    :type max_length: int, optional</span>
+<span class="sd">    :param data_embedding: Data embedding, defaults to None.</span>
+<span class="sd">    :type data_embedding: torch.Tensor, optional</span>
+<span class="sd">    :param n_mc_samples: Number of Monte Carlo samples for dropout, defaults to 5.</span>
+<span class="sd">    :type n_mc_samples: int, optional</span>
+
+<span class="sd">    :return: Tuple containing the generated sequence and corresponding embedding.</span>
+<span class="sd">    :rtype: tuple(list, torch.Tensor)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">max_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">max_length</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">model</span><span class="o">.</span><span class="n">m_items</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Maximum full sequence length</span>
+    
+    <span class="c1"># Initialize generated sequence with index of start token (empty state) </span>
+    <span class="n">generated_sequence</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Zero for empty state as start token</span>
+    <span class="n">K_embedding_batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">()</span>
+
+    <span class="c1"># Enable only dropout layers during MCDP inference</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">enable_mc_dropout</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">modules</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">):</span>
+                <span class="n">module</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    
+    <span class="n">enable_mc_dropout</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_length</span><span class="p">):</span>
+            <span class="c1"># Convert the generated sequence so far to a tensor</span>
+            <span class="n">current_seq</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">generated_sequence</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+            <span class="c1"># Perform multiple MC forward passes to predict the next token</span>
+            <span class="n">mc_outputs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">mc_embeddings</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_mc_samples</span><span class="p">):</span>
+                <span class="n">output</span><span class="p">,</span> <span class="n">embedding</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">conditionals</span><span class="p">,</span> <span class="n">current_seq</span><span class="p">,</span> <span class="n">data_embedding</span><span class="o">=</span><span class="n">data_embedding</span><span class="p">)</span>
+                <span class="n">mc_outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+                <span class="n">mc_embeddings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">embedding</span><span class="p">)</span>
+
+            <span class="c1"># Aggregate outputs and embeddings</span>
+            <span class="n">mc_outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">mc_outputs</span><span class="p">)</span>  <span class="c1"># Shape: [n_mc_samples, seq_len, vocab_size]</span>
+            <span class="n">mc_embeddings</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">mc_embeddings</span><span class="p">)</span>  <span class="c1"># Shape: [n_mc_samples, embedding_dim]</span>
+
+            <span class="c1"># Majority voting for the next token</span>
+            <span class="n">token_predictions</span> <span class="o">=</span> <span class="n">mc_outputs</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Shape (n_mc_samples)</span>
+            <span class="c1"># Mode calculation not implemented for MPS, so move to CPU (todo: analyse overhead...)</span>
+            <span class="n">token_predictions_cpu</span> <span class="o">=</span> <span class="n">token_predictions</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>  
+            <span class="n">next_token_id</span> <span class="o">=</span> <span class="n">token_predictions_cpu</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> 
+
+            <span class="c1"># Add newly predicted token to the sequence</span>
+            <span class="n">generated_sequence</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_token_id</span><span class="p">)</span>
+
+            <span class="c1"># Break if EOS token is generated</span>
+            <span class="k">if</span> <span class="n">next_token_id</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">-</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">break</span>
+
+    <span class="k">return</span> <span class="n">generated_sequence</span><span class="p">,</span> <span class="n">K_embedding_batch</span>  </div>
+
+
+<div class="viewcode-block" id="performance">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.performance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">performance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">,</span> <span class="n">regressor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">n_mc_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;mps&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate the performance of a trained decoder model using a given dataloader.</span>
+<span class="sd">    Computes the accuracy, average symbolic difference, and standard deviation of the symbolic difference.</span>
+<span class="sd">    </span>
+<span class="sd">    :param model: Trained decoder model.</span>
+<span class="sd">    :type model: nn.Module</span>
+<span class="sd">    :param dataloader: DataLoader for the evaluation data.</span>
+<span class="sd">    :type dataloader: torch.utils.data.DataLoader</span>
+<span class="sd">    :param regressor: Regressor model for data embedding, defaults to None.</span>
+<span class="sd">    :type regressor: nn.Module, optional</span>
+<span class="sd">    :param num_samples: Number of samples to evaluate, defaults to 100.</span>
+<span class="sd">    :type num_samples: int</span>
+<span class="sd">    :param n_mc_samples: Number of Monte Carlo samples for dropout, defaults to None.</span>
+<span class="sd">    :type n_mc_samples: int, optional</span>
+<span class="sd">    :param log: Whether to log the performance metrics, defaults to False.</span>
+<span class="sd">    :type log: bool</span>
+<span class="sd">    :param device: Device to use for inference, defaults to &quot;mps&quot;.</span>
+<span class="sd">    :type device: str</span>
+
+<span class="sd">    :return: Tuple containing the accuracy, average symmetric difference, and standard deviation of symmetric differences.</span>
+<span class="sd">    :rtype: tuple(float, float, float)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">eos_token_id</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">-</span> <span class="mi">2</span>
+    <span class="n">pad_token_id</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="c1"># Accumulators for perfromance meassures </span>
+    <span class="n">correct_predictions</span> <span class="o">=</span> <span class="mi">0</span>   
+    <span class="n">avr_sym_diffs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Determine if MC dropout is enabled</span>
+    <span class="n">mcdp</span> <span class="o">=</span> <span class="s2">&quot;enabled&quot;</span> <span class="k">if</span> <span class="n">n_mc_samples</span> <span class="k">else</span> <span class="s2">&quot;disabled&quot;</span>
+
+    <span class="c1"># Assumes batch size 1</span>
+    <span class="c1"># Create an iterator from the dataloader</span>
+    <span class="n">dataloader_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">dataloader</span><span class="p">)</span>
+
+    <span class="c1"># Loop over the number of samples and retrieve a batch in each iteration</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_samples</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Testing performance with MCDP </span><span class="si">{</span><span class="n">mcdp</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">dataloader_iter</span><span class="p">)</span>
+            <span class="n">conditionals</span><span class="p">,</span> <span class="n">input_seq</span><span class="p">,</span> <span class="n">target_seq</span><span class="p">,</span> <span class="n">input_obs</span> <span class="o">=</span> <span class="n">batch</span>
+           
+            <span class="n">conditionals</span> <span class="o">=</span> <span class="n">conditionals</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">input_seq</span> <span class="o">=</span> <span class="n">input_seq</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">target_seq</span> <span class="o">=</span> <span class="n">target_seq</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">input_obs</span> <span class="o">=</span> <span class="n">input_obs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+            <span class="c1"># Generate sequence flexibly with or w/o MCDP</span>
+            <span class="k">if</span> <span class="n">n_mc_samples</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">output_seq</span><span class="p">,</span> <span class="n">emb</span> <span class="o">=</span> <span class="n">generate_sequence</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">conditionals</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span> 
+                <span class="n">output_seq</span><span class="p">,</span> <span class="n">emb</span> <span class="o">=</span> <span class="n">generate_sequence_MCDP</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">conditionals</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">n_mc_samples</span><span class="o">=</span><span class="n">n_mc_samples</span><span class="p">)</span>
+
+            <span class="c1"># Convert outputs and targets to list</span>
+            <span class="n">output_seq_lst</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">output_seq</span> <span class="k">if</span> <span class="n">t</span> <span class="o">!=</span> <span class="n">pad_token_id</span> <span class="ow">and</span> <span class="n">t</span> <span class="o">!=</span> <span class="n">eos_token_id</span><span class="p">]</span>
+            <span class="c1">#output_seq_lst = output_seq[(output_seq != pad_token_id) &amp; (output_seq != eos_token_id)].tolist()</span>
+            <span class="c1"># To do: fix for batche processing </span>
+            <span class="n">target_seq_lst</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">target_seq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">if</span> <span class="n">t</span> <span class="o">!=</span> <span class="n">pad_token_id</span> <span class="ow">and</span> <span class="n">t</span> <span class="o">!=</span> <span class="n">eos_token_id</span><span class="p">]</span>
+
+            <span class="c1"># Compute dissimilarity between generated and target sequence</span>
+            <span class="n">sym_diff</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">output_seq_lst</span><span class="p">)</span> <span class="o">^</span> <span class="nb">set</span><span class="p">(</span><span class="n">target_seq_lst</span><span class="p">))</span>
+            <span class="n">avr_sym_diffs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sym_diff</span><span class="p">)</span>
+            <span class="c1"># Check if generated sequence matches the target sequence</span>
+            <span class="k">if</span> <span class="n">output_seq_lst</span> <span class="o">==</span> <span class="n">target_seq_lst</span><span class="p">:</span>
+                <span class="n">correct_predictions</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="c1"># If the dataloader runs out of data, break the loop</span>
+            <span class="k">break</span>
+    
+    <span class="c1"># Calculate accuracy mean and standard deviation</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="n">correct_predictions</span> <span class="o">/</span> <span class="n">num_samples</span>
+    <span class="n">avr_sym_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">avr_sym_diffs</span><span class="p">)</span>
+    <span class="n">std_sym_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">avr_sym_diffs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">acc</span><span class="p">,</span> <span class="n">avr_sym_diff</span><span class="p">,</span> <span class="n">std_sym_diff</span></div>
+
+
+<div class="viewcode-block" id="save_model">
+<a class="viewcode-back" href="../../dkst.models.html#dkst.models.save_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save a torch model and optimizer state to file.</span>
+
+<span class="sd">    :param model: Model to save.</span>
+<span class="sd">    :type model: nn.Module</span>
+<span class="sd">    :param optimizer: Optimizer to save.</span>
+<span class="sd">    :type optimizer: torch.optim.Optimizer</span>
+<span class="sd">    :param epoch: Current epoch.</span>
+<span class="sd">    :type epoch: int</span>
+<span class="sd">    :param path: Path to save the model and optimizer state.</span>
+<span class="sd">    :type path: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">({</span>
+        <span class="s1">&#39;epoch&#39;</span><span class="p">:</span> <span class="n">epoch</span><span class="p">,</span>
+        <span class="s1">&#39;model_state_dict&#39;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
+        <span class="s1">&#39;optimizer_state_dict&#39;</span><span class="p">:</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+    <span class="p">},</span> <span class="n">path</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jakob Lederer.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

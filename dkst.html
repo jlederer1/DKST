@@ -81,14 +81,105 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="dkst.utils.html">dkst.utils</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="dkst.utils.html#dkst-utils-dkst-utils">dkst.utils.DKST_utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dkst.utils.html#dkst-utils-kst-utils">dkst.utils.KST_utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dkst.utils.html#dkst-utils-relations">dkst.utils.relations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dkst.utils.html#dkst-utils-set-operations">dkst.utils.set_operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.utils.html#module-dkst.utils.DKST_utils">dkst.utils.DKST_utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.DKST_utils.calculate_counts"><code class="docutils literal notranslate"><span class="pre">calculate_counts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.DKST_utils.check_config"><code class="docutils literal notranslate"><span class="pre">check_config()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.DKST_utils.create_state2idx"><code class="docutils literal notranslate"><span class="pre">create_state2idx()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.DKST_utils.decode_sequence"><code class="docutils literal notranslate"><span class="pre">decode_sequence()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.DKST_utils.decode_sequences"><code class="docutils literal notranslate"><span class="pre">decode_sequences()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.DKST_utils.encode_sequence"><code class="docutils literal notranslate"><span class="pre">encode_sequence()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.DKST_utils.encode_sequences"><code class="docutils literal notranslate"><span class="pre">encode_sequences()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.DKST_utils.pad_K"><code class="docutils literal notranslate"><span class="pre">pad_K()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.DKST_utils.pad_relations"><code class="docutils literal notranslate"><span class="pre">pad_relations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.DKST_utils.pad_sequences"><code class="docutils literal notranslate"><span class="pre">pad_sequences()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.DKST_utils.trim_K"><code class="docutils literal notranslate"><span class="pre">trim_K()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="dkst.dkst_datasets.html">dkst.dkst_datasets</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dkst.models.html">dkst.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.utils.html#module-dkst.utils.KST_utils">dkst.utils.KST_utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.KST_utils.blim"><code class="docutils literal notranslate"><span class="pre">blim()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.KST_utils.compute_conditionals"><code class="docutils literal notranslate"><span class="pre">compute_conditionals()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.KST_utils.compute_r"><code class="docutils literal notranslate"><span class="pre">compute_r()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.KST_utils.compute_rho"><code class="docutils literal notranslate"><span class="pre">compute_rho()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.KST_utils.extend_quasi_order"><code class="docutils literal notranslate"><span class="pre">extend_quasi_order()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.KST_utils.generate_all_surmise_relations"><code class="docutils literal notranslate"><span class="pre">generate_all_surmise_relations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.KST_utils.implications_to_states"><code class="docutils literal notranslate"><span class="pre">implications_to_states()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.KST_utils.sample_knowledge_structures"><code class="docutils literal notranslate"><span class="pre">sample_knowledge_structures()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.KST_utils.sample_response_data"><code class="docutils literal notranslate"><span class="pre">sample_response_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.KST_utils.sample_surmise_relations"><code class="docutils literal notranslate"><span class="pre">sample_surmise_relations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.KST_utils.sampling_quasiorders"><code class="docutils literal notranslate"><span class="pre">sampling_quasiorders()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.KST_utils.states_to_implications"><code class="docutils literal notranslate"><span class="pre">states_to_implications()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.utils.html#module-dkst.utils.relations">dkst.utils.relations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.relations.S_to_matrix"><code class="docutils literal notranslate"><span class="pre">S_to_matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.relations.is_antisymmetric"><code class="docutils literal notranslate"><span class="pre">is_antisymmetric()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.relations.is_reflexive"><code class="docutils literal notranslate"><span class="pre">is_reflexive()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.relations.is_transitive"><code class="docutils literal notranslate"><span class="pre">is_transitive()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.relations.matrix_to_S"><code class="docutils literal notranslate"><span class="pre">matrix_to_S()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.relations.transitive_closure"><code class="docutils literal notranslate"><span class="pre">transitive_closure()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.relations.transitive_reduction"><code class="docutils literal notranslate"><span class="pre">transitive_reduction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.relations.transitive_reduction_matrix"><code class="docutils literal notranslate"><span class="pre">transitive_reduction_matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.relations.transitive_reduction_tuples"><code class="docutils literal notranslate"><span class="pre">transitive_reduction_tuples()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.utils.html#module-dkst.utils.set_operations">dkst.utils.set_operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.set_operations.K_to_matrix"><code class="docutils literal notranslate"><span class="pre">K_to_matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.set_operations.intersection_closure"><code class="docutils literal notranslate"><span class="pre">intersection_closure()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.set_operations.is_intersection_closed"><code class="docutils literal notranslate"><span class="pre">is_intersection_closed()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.set_operations.is_union_closed"><code class="docutils literal notranslate"><span class="pre">is_union_closed()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.set_operations.matrix_to_K"><code class="docutils literal notranslate"><span class="pre">matrix_to_K()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.set_operations.powerset"><code class="docutils literal notranslate"><span class="pre">powerset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.set_operations.powerset_binary"><code class="docutils literal notranslate"><span class="pre">powerset_binary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.set_operations.sort_K"><code class="docutils literal notranslate"><span class="pre">sort_K()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.set_operations.sort_K_binary"><code class="docutils literal notranslate"><span class="pre">sort_K_binary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.set_operations.union_base"><code class="docutils literal notranslate"><span class="pre">union_base()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dkst.utils.html#dkst.utils.set_operations.union_closure"><code class="docutils literal notranslate"><span class="pre">union_closure()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dkst.dkst_datasets.html">dkst.dkst_datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dkst.dkst_datasets.html#dkst.dkst_datasets.DKSTDataset02"><code class="docutils literal notranslate"><span class="pre">DKSTDataset02</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.dkst_datasets.html#dkst.dkst_datasets.collate_fn"><code class="docutils literal notranslate"><span class="pre">collate_fn()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dkst.models.html">dkst.models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dkst.models.html#dkst.models.CustomCELoss"><code class="docutils literal notranslate"><span class="pre">CustomCELoss</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dkst.models.html#dkst.models.CustomCELoss.forward"><code class="docutils literal notranslate"><span class="pre">CustomCELoss.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.models.html#dkst.models.CustomDecoderModel"><code class="docutils literal notranslate"><span class="pre">CustomDecoderModel</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dkst.models.html#dkst.models.CustomDecoderModel.forward"><code class="docutils literal notranslate"><span class="pre">CustomDecoderModel.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.models.html#dkst.models.CustomTransformerDecoder"><code class="docutils literal notranslate"><span class="pre">CustomTransformerDecoder</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dkst.models.html#dkst.models.CustomTransformerDecoder.forward"><code class="docutils literal notranslate"><span class="pre">CustomTransformerDecoder.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.models.html#dkst.models.CustomTransformerDecoderLayer"><code class="docutils literal notranslate"><span class="pre">CustomTransformerDecoderLayer</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dkst.models.html#dkst.models.CustomTransformerDecoderLayer.forward"><code class="docutils literal notranslate"><span class="pre">CustomTransformerDecoderLayer.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.models.html#dkst.models.LengthNormLoss"><code class="docutils literal notranslate"><span class="pre">LengthNormLoss</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dkst.models.html#dkst.models.LengthNormLoss.forward"><code class="docutils literal notranslate"><span class="pre">LengthNormLoss.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.models.html#dkst.models.PositionalEncoding"><code class="docutils literal notranslate"><span class="pre">PositionalEncoding</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dkst.models.html#dkst.models.PositionalEncoding.forward"><code class="docutils literal notranslate"><span class="pre">PositionalEncoding.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.models.html#dkst.models.RegressionNetwork"><code class="docutils literal notranslate"><span class="pre">RegressionNetwork</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dkst.models.html#dkst.models.RegressionNetwork.forward"><code class="docutils literal notranslate"><span class="pre">RegressionNetwork.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.models.html#dkst.models.eval"><code class="docutils literal notranslate"><span class="pre">eval()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.models.html#dkst.models.generate_sequence"><code class="docutils literal notranslate"><span class="pre">generate_sequence()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.models.html#dkst.models.generate_sequence_MCDP"><code class="docutils literal notranslate"><span class="pre">generate_sequence_MCDP()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.models.html#dkst.models.performance"><code class="docutils literal notranslate"><span class="pre">performance()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.models.html#dkst.models.save_model"><code class="docutils literal notranslate"><span class="pre">save_model()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.models.html#dkst.models.train"><code class="docutils literal notranslate"><span class="pre">train()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </div>
 </section>

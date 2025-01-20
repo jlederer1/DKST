@@ -1,0 +1,370 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dkst.utils.relations &mdash; dkst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            dkst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../dkst.html">dkst package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">dkst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dkst.utils.relations</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dkst.utils.relations</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">relations.py</span>
+
+<span class="sd">This module provides functions to determine if a given relation is reflexive, transitive or antisymmetric. </span>
+<span class="sd">It also provides functions to compute the transitive closure/reduction of a binary relation and sort it in matrix notation.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<div class="viewcode-block" id="is_reflexive">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.relations.is_reflexive">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_reflexive</span><span class="p">(</span><span class="n">matrix</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the given square binary matrix is reflexive.</span>
+
+<span class="sd">    A matrix is reflexive if all diagonal elements are 1.</span>
+
+<span class="sd">    :param matrix: A square binary matrix (list of lists).</span>
+<span class="sd">    :type matrix: list[list[int]]</span>
+<span class="sd">    :return: True if the matrix is reflexive, False otherwise.</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="is_transitive">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.relations.is_transitive">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_transitive</span><span class="p">(</span><span class="n">matrix</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the given square binary matrix is transitive.</span>
+
+<span class="sd">    A matrix is transitive if for all i, j, k, if matrix[i][j] == 1 and matrix[j][k] == 1, </span>
+<span class="sd">    then matrix[i][k] must also be 1.</span>
+
+<span class="sd">    :param matrix: A square binary matrix (list of lists).</span>
+<span class="sd">    :type matrix: list[list[int]]</span>
+<span class="sd">    :return: True if the matrix is transitive, False otherwise.</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">matrix</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="is_antisymmetric">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.relations.is_antisymmetric">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_antisymmetric</span><span class="p">(</span><span class="n">matrix</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the given square binary matrix is antisymmetric.</span>
+
+<span class="sd">    A matrix is antisymmetric if for all i, j: if matrix[i][j] = 1 and i ≠ j,</span>
+<span class="sd">    then matrix[j][i] must be 0.</span>
+
+<span class="sd">    :param matrix: A square binary matrix (list of lists).</span>
+<span class="sd">    :type matrix: list[list[int]]</span>
+<span class="sd">    :return: True if the matrix is antisymmetric, False otherwise.</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">j</span> <span class="ow">and</span> <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">matrix</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="transitive_closure">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.relations.transitive_closure">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">transitive_closure</span><span class="p">(</span><span class="n">matrix</span><span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the transitive closure of a given binary relation in matrix notation or set notation, using the Warshall&#39;s algorithm.</span>
+<span class="sd">    </span>
+<span class="sd">    :param matrix: A square binary matrix or a list of tuples representing a binary relation.</span>
+<span class="sd">    :type matrix: np.ndarray or list[tuple[str, str]]</span>
+<span class="sd">    :return: The transitive closure of the given binary relation.</span>
+<span class="sd">    :rtype: np.ndarray or list[tuple[str, str]], respectively, matching the input type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">return_set_notation</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">S_to_matrix</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+        <span class="n">return_set_notation</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># number of items</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="c1"># Warshall&#39;s algorithm to compute the transitive closure</span>
+    <span class="n">closure</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                <span class="n">closure</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">closure</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="ow">or</span> <span class="p">(</span><span class="n">closure</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="ow">and</span> <span class="n">closure</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+    
+    <span class="c1"># If the input was a tuple list, return the result as a list of tuples</span>
+    <span class="k">if</span> <span class="n">return_set_notation</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">matrix_to_S</span><span class="p">(</span><span class="n">closure</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">closure</span></div>
+
+
+<div class="viewcode-block" id="transitive_reduction">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.relations.transitive_reduction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">transitive_reduction</span><span class="p">(</span><span class="n">relation</span><span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the transitive reduction of a given binary relation.</span>
+<span class="sd">    If the input is in set notation, transitive_reduction_tuples is executed.</span>
+<span class="sd">    If the input is in matrix notation, transitive_reduction_matrix is executed.</span>
+<span class="sd">    </span>
+<span class="sd">    :param matrix: A square binary matrix or a list of tuples representing a binary relation.</span>
+<span class="sd">    :type matrix: np.ndarray | list[tuple[str, str]]</span>
+<span class="sd">    </span>
+<span class="sd">    :return: The transitive reduction of given binary relation.</span>
+<span class="sd">    :rtype: np.ndarray | list[tuple[str, str]], depending on the input</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">relation</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="c1"># reduction in set notation is slightly faster</span>
+        <span class="k">return</span> <span class="n">transitive_reduction_tuples</span><span class="p">(</span><span class="n">relation</span><span class="p">)</span> 
+    
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">relation</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="c1"># Check input matrix</span>
+        <span class="k">if</span> <span class="n">relation</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">relation</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">transitive_reduction_matrix</span><span class="p">(</span><span class="n">relation</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input matrix must be a square numpy array or a list of tuples.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="transitive_reduction_matrix">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.relations.transitive_reduction_matrix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">transitive_reduction_matrix</span><span class="p">(</span><span class="n">matrix</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the transitive reduction of a given binary relation in matrix notation.</span>
+<span class="sd">    </span>
+<span class="sd">    :param matrix: A square binary matrix representing a binary relation.</span>
+<span class="sd">    :type matrix: np.ndarray </span>
+<span class="sd">    </span>
+<span class="sd">    :return: The transitive reduction of given binary relation.</span>
+<span class="sd">    :rtype: np.ndarray </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># Number of items</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="c1"># Initialize transitive reduction as copy of input matrix</span>
+    <span class="n">reduction</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="c1"># Iterate through all pairs (i, j)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="c1"># If there is a direct relation (i, j), check for transitivity</span>
+            <span class="k">if</span> <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+                    <span class="c1"># If there is an indirect path i -&gt; k -&gt; j, mark (i, j) as redundant</span>
+                    <span class="k">if</span> <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">matrix</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">k</span> <span class="o">!=</span> <span class="n">i</span> <span class="ow">and</span> <span class="n">k</span> <span class="o">!=</span> <span class="n">j</span><span class="p">:</span>
+                        <span class="n">reduction</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Remove redundant edge</span>
+    
+    <span class="k">return</span> <span class="n">reduction</span></div>
+
+
+<div class="viewcode-block" id="transitive_reduction_tuples">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.relations.transitive_reduction_tuples">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">transitive_reduction_tuples</span><span class="p">(</span><span class="n">relations</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the transitive reduction of a binary relation represented as a list of tuples.</span>
+<span class="sd">    </span>
+<span class="sd">    Note: Does not preserve the order of the input tuples.</span>
+
+<span class="sd">    :param relations: A list of tuples representing the binary relation.</span>
+<span class="sd">    :type relations: list[tuple[str, str]]</span>
+
+<span class="sd">    :return: The transitive reduction of the given binary relation as a list of tuples.</span>
+<span class="sd">    :rtype: list[tuple[str, str]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Convert list to set for efficient lookup</span>
+    <span class="n">relations_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">relations</span><span class="p">)</span>
+    <span class="n">reduction</span> <span class="o">=</span> <span class="n">relations_set</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># For each pair (a, b), check if there is an alternative path from a to b</span>
+    <span class="c1"># by chaining existing relations without using (a, b) directly.</span>
+    <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">relations_set</span><span class="p">:</span>
+        <span class="c1"># Temporarily remove (a, b) to avoid trivial paths</span>
+        <span class="n">relations_set</span><span class="o">.</span><span class="n">remove</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+
+        <span class="c1"># Use a set to keep track of nodes reachable from a</span>
+        <span class="n">reachable</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="c1"># Initialize the frontier with nodes directly reachable from a</span>
+        <span class="n">frontier</span> <span class="o">=</span> <span class="p">{</span><span class="n">a</span><span class="p">}</span>
+
+        <span class="k">while</span> <span class="n">frontier</span><span class="p">:</span>
+            <span class="n">next_frontier</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">frontier</span><span class="p">:</span>
+                <span class="c1"># Find all nodes that can be reached from &#39;node&#39;</span>
+                <span class="n">successors</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">relations_set</span> <span class="k">if</span> <span class="n">u</span> <span class="o">==</span> <span class="n">node</span><span class="p">}</span>
+                <span class="c1"># If b is among the successors, we can reach b without (a, b)</span>
+                <span class="k">if</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">successors</span><span class="p">:</span>
+                    <span class="c1"># Edge (a, b) is redundant</span>
+                    <span class="n">reduction</span><span class="o">.</span><span class="n">discard</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+                    <span class="c1"># No need to search further for this pair</span>
+                    <span class="n">next_frontier</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+                    <span class="k">break</span>
+                <span class="n">next_frontier</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">successors</span><span class="p">)</span>
+            <span class="c1"># Update the reachable set and the frontier</span>
+            <span class="n">reachable</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">frontier</span><span class="p">)</span>
+            <span class="n">frontier</span> <span class="o">=</span> <span class="n">next_frontier</span> <span class="o">-</span> <span class="n">reachable</span>
+
+        <span class="c1"># Add (a, b) back to the relations set for the next iteration</span>
+        <span class="n">relations_set</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">reduction</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="S_to_matrix">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.relations.S_to_matrix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">S_to_matrix</span><span class="p">(</span><span class="n">S</span><span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a quasiorder S to a square binary matrix.</span>
+
+<span class="sd">    A quasiorder is a list of tuples (i, j) where i precedes j in the quasiorder.</span>
+
+<span class="sd">    :param S: A quasiorder.</span>
+<span class="sd">    :type S: list[tuple[char, char]]</span>
+<span class="sd">    :return: The square binary matrix representation of the quasiorder.</span>
+<span class="sd">    :rtype: np.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">ord</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">-</span> <span class="nb">ord</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">),</span> <span class="nb">ord</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">-</span> <span class="nb">ord</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">S</span><span class="p">]</span>
+    
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span> <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">S</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">m</span><span class="p">,</span> <span class="n">m</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">S</span><span class="p">:</span>
+        <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    
+    <span class="c1"># ensure reflexivity</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+        <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">matrix</span></div>
+
+
+<div class="viewcode-block" id="matrix_to_S">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.relations.matrix_to_S">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">matrix_to_S</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">include_reflexive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a square binary matrix to a quasiorder in set representation.</span>
+
+<span class="sd">    A quasiorder is a list of tuples (i, j) where i precedes j in the quasiorder.</span>
+
+<span class="sd">    :param matrix: A square binary matrix.</span>
+<span class="sd">    :type matrix: np.ndarray</span>
+<span class="sd">    :return: The quasiorder representation of the matrix.</span>
+<span class="sd">    :rtype: list[tuple[char, char]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="n">include_reflexive</span> <span class="ow">or</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">j</span><span class="p">):</span>
+                <span class="n">S</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">chr</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="nb">ord</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)),</span> <span class="nb">chr</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="nb">ord</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">))))</span>
+    <span class="k">return</span> <span class="n">S</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jakob Lederer.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

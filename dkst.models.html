@@ -46,7 +46,43 @@
 <li class="toctree-l1 current"><a class="reference internal" href="dkst.html">dkst package</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="dkst.utils.html">dkst.utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dkst.dkst_datasets.html">dkst.dkst_datasets</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">dkst.models</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">dkst.models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.models.CustomCELoss"><code class="docutils literal notranslate"><span class="pre">CustomCELoss</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.models.CustomCELoss.forward"><code class="docutils literal notranslate"><span class="pre">CustomCELoss.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.models.CustomDecoderModel"><code class="docutils literal notranslate"><span class="pre">CustomDecoderModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.models.CustomDecoderModel.forward"><code class="docutils literal notranslate"><span class="pre">CustomDecoderModel.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.models.CustomTransformerDecoder"><code class="docutils literal notranslate"><span class="pre">CustomTransformerDecoder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.models.CustomTransformerDecoder.forward"><code class="docutils literal notranslate"><span class="pre">CustomTransformerDecoder.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.models.CustomTransformerDecoderLayer"><code class="docutils literal notranslate"><span class="pre">CustomTransformerDecoderLayer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.models.CustomTransformerDecoderLayer.forward"><code class="docutils literal notranslate"><span class="pre">CustomTransformerDecoderLayer.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.models.LengthNormLoss"><code class="docutils literal notranslate"><span class="pre">LengthNormLoss</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.models.LengthNormLoss.forward"><code class="docutils literal notranslate"><span class="pre">LengthNormLoss.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.models.PositionalEncoding"><code class="docutils literal notranslate"><span class="pre">PositionalEncoding</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.models.PositionalEncoding.forward"><code class="docutils literal notranslate"><span class="pre">PositionalEncoding.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.models.RegressionNetwork"><code class="docutils literal notranslate"><span class="pre">RegressionNetwork</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.models.RegressionNetwork.forward"><code class="docutils literal notranslate"><span class="pre">RegressionNetwork.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.models.eval"><code class="docutils literal notranslate"><span class="pre">eval()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.models.generate_sequence"><code class="docutils literal notranslate"><span class="pre">generate_sequence()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.models.generate_sequence_MCDP"><code class="docutils literal notranslate"><span class="pre">generate_sequence_MCDP()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.models.performance"><code class="docutils literal notranslate"><span class="pre">performance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.models.save_model"><code class="docutils literal notranslate"><span class="pre">save_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.models.train"><code class="docutils literal notranslate"><span class="pre">train()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -76,8 +112,364 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="dkst-models">
-<h1>dkst.models<a class="headerlink" href="#dkst-models" title="Link to this heading"></a></h1>
+  <section id="module-dkst.models">
+<span id="dkst-models"></span><h1>dkst.models<a class="headerlink" href="#module-dkst.models" title="Link to this heading"></a></h1>
+<p>DKST_datasets.py</p>
+<p>This module provides different types of torch modules for DKST models.
+As well as utility functions for training, inference and evaluation.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dkst.models.CustomCELoss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dkst.models.</span></span><span class="sig-name descname"><span class="pre">CustomCELoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label_smoothing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#CustomCELoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.CustomCELoss" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Custom Cross-Entropy Loss with label smoothing and padding token masking.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dkst.models.CustomCELoss.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#CustomCELoss.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.CustomCELoss.forward" title="Link to this definition"></a></dt>
+<dd><p>Forward pass for the CustomCELoss class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output</strong> (<em>torch.Tensor</em>) – Predicted output tensor of shape (seq_length, batch_size, vocab_size).</p></li>
+<li><p><strong>labels</strong> (<em>torch.Tensor</em>) – Ground truth labels tensor of shape (batch_size, seq_length).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Averaged cross-entropy loss over non-padding tokens.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dkst.models.CustomDecoderModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dkst.models.</span></span><span class="sig-name descname"><span class="pre">CustomDecoderModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#CustomDecoderModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.CustomDecoderModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Customized transformer decoder model for Knowledge Net.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dkst.models.CustomDecoderModel.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conditionals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_embedding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#CustomDecoderModel.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.CustomDecoderModel.forward" title="Link to this definition"></a></dt>
+<dd><p>Forward pass through the transformer decoder.
+Output shapes are as follows:
+- Output sequence: (seq_len, batch_size, vocab_size+1)
+- Data embedding: (batch_size, hidden_dim)
+- Attention weights: list of length n_layers, each element is a tensor of self-attention wheights of shape (batch_size, num_heads, seq_length, seq_length).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conditionals</strong> (<em>torch.Tensor</em>) – Tensor of conditional probabilities of shape (batch_size, 2**m).</p></li>
+<li><p><strong>input_seq</strong> (<em>torch.Tensor</em>) – Input sequence as tensor of shape (batch_size, seq_length).</p></li>
+<li><p><strong>data_embedding</strong> (<em>torch.Tensor</em>) – Data embedding, defaults to None, shape (batch_size, hidden_dim).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output sequence (seq_len, batch_size, vocab_size+1), data embedding (batch_size, hidden_dim), attention weights (list ).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dkst.models.CustomTransformerDecoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dkst.models.</span></span><span class="sig-name descname"><span class="pre">CustomTransformerDecoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decoder_layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_layers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#CustomTransformerDecoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.CustomTransformerDecoder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TransformerDecoder</span></code></p>
+<p>Customized torch transformer decoder.
+Provides axcess to attention weights.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dkst.models.CustomTransformerDecoder.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tgt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tgt_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tgt_key_padding_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_key_padding_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#CustomTransformerDecoder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.CustomTransformerDecoder.forward" title="Link to this definition"></a></dt>
+<dd><p>Forward pass through the transformer decoder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tgt</strong> (<em>torch.Tensor</em>) – Target sequence of shape (seq_length, batch_size, d_model).</p></li>
+<li><p><strong>memory</strong> (<em>torch.Tensor</em>) – Memory from the encoder of shape (seq_length, batch_size, d_model).</p></li>
+<li><p><strong>tgt_mask</strong> (<em>Optional</em><em>[</em><em>torch.Tensor</em><em>]</em>) – Mask for the target sequence, optional.</p></li>
+<li><p><strong>memory_mask</strong> (<em>Optional</em><em>[</em><em>torch.Tensor</em><em>]</em>) – Mask for the memory sequence, optional.</p></li>
+<li><p><strong>tgt_key_padding_mask</strong> (<em>Optional</em><em>[</em><em>torch.Tensor</em><em>]</em>) – Padding mask for the target keys, optional.</p></li>
+<li><p><strong>memory_key_padding_mask</strong> (<em>Optional</em><em>[</em><em>torch.Tensor</em><em>]</em>) – Padding mask for the memory keys, optional.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output sequence of shape (seq_length, batch_size, d_model) and list of attention weights, each of shape (batch_size, num_heads, seq_length, seq_length).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple(torch.Tensor, list[torch.Tensor])</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dkst.models.CustomTransformerDecoderLayer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dkst.models.</span></span><span class="sig-name descname"><span class="pre">CustomTransformerDecoderLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nhead</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim_feedforward</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2048</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'relu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_norm_eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#CustomTransformerDecoderLayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.CustomTransformerDecoderLayer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TransformerDecoderLayer</span></code></p>
+<p>Customized torch transformer decoder layer.
+Provides axcess to attention weights.
+Uses MultiheadAttention for both self-attention and cross-attention.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dkst.models.CustomTransformerDecoderLayer.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tgt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tgt_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tgt_key_padding_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_key_padding_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">need_weights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#CustomTransformerDecoderLayer.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.CustomTransformerDecoderLayer.forward" title="Link to this definition"></a></dt>
+<dd><p>Pass the inputs (and mask) through the decoder layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tgt</strong> – the sequence to the decoder layer (required).</p></li>
+<li><p><strong>memory</strong> – the sequence from the last layer of the encoder (required).</p></li>
+<li><p><strong>tgt_mask</strong> – the mask for the tgt sequence (optional).</p></li>
+<li><p><strong>memory_mask</strong> – the mask for the memory sequence (optional).</p></li>
+<li><p><strong>tgt_key_padding_mask</strong> – the mask for the tgt keys per batch (optional).</p></li>
+<li><p><strong>memory_key_padding_mask</strong> – the mask for the memory keys per batch (optional).</p></li>
+<li><p><strong>tgt_is_causal</strong> – If specified, applies a causal mask as <code class="docutils literal notranslate"><span class="pre">tgt</span> <span class="pre">mask</span></code>.
+Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.
+Warning:
+<code class="docutils literal notranslate"><span class="pre">tgt_is_causal</span></code> provides a hint that <code class="docutils literal notranslate"><span class="pre">tgt_mask</span></code> is
+the causal mask. Providing incorrect hints can result in
+incorrect execution, including forward and backward
+compatibility.</p></li>
+<li><p><strong>memory_is_causal</strong> – If specified, applies a causal mask as
+<code class="docutils literal notranslate"><span class="pre">memory</span> <span class="pre">mask</span></code>.
+Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.
+Warning:
+<code class="docutils literal notranslate"><span class="pre">memory_is_causal</span></code> provides a hint that
+<code class="docutils literal notranslate"><span class="pre">memory_mask</span></code> is the causal mask. Providing incorrect
+hints can result in incorrect execution, including
+forward and backward compatibility.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Shape:</dt><dd><p>see the docs in <code class="xref py py-class docutils literal notranslate"><span class="pre">Transformer</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dkst.models.LengthNormLoss">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dkst.models.</span></span><span class="sig-name descname"><span class="pre">LengthNormLoss</span></span><a class="reference internal" href="_modules/dkst/models.html#LengthNormLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.LengthNormLoss" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Length-Norm-Loss: Evaluates the alignment between hidden representation’s norms and sequence lengths using MSE.
+Regularizes K-net’s training and embedding space.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dkst.models.LengthNormLoss.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embeddings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vocab_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#LengthNormLoss.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.LengthNormLoss.forward" title="Link to this definition"></a></dt>
+<dd><p>Forward pass for the LengthLoss class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>embeddings</strong> – Hidden representations for each sample per batch.</p></li>
+<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – Ground truth labels tensor of shape (batch_size, seq_length).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Length-Norm-Loss.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dkst.models.PositionalEncoding">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dkst.models.</span></span><span class="sig-name descname"><span class="pre">PositionalEncoding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hidden_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#PositionalEncoding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.PositionalEncoding" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Sinusoidal positional encoding for transformer models.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dkst.models.PositionalEncoding.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#PositionalEncoding.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.PositionalEncoding.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dkst.models.RegressionNetwork">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dkst.models.</span></span><span class="sig-name descname"><span class="pre">RegressionNetwork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_size1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_size2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout_val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#RegressionNetwork"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.RegressionNetwork" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Regressor for response pattern aggregates by frequency.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dkst.models.RegressionNetwork.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#RegressionNetwork.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.RegressionNetwork.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.models.eval">
+<span class="sig-prename descclassname"><span class="pre">dkst.models.</span></span><span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ce_loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ln_loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ln_wheight</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">penalty_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mps'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.eval" title="Link to this definition"></a></dt>
+<dd><p>Evaluate K-net/decoder model for one epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>nn.Module</em>) – Decoder model to evaluate.</p></li>
+<li><p><strong>eval_loader</strong> (<em>torch.utils.data.DataLoader</em>) – DataLoader for the evaluation data.</p></li>
+<li><p><strong>ce_loss</strong> (<em>callable</em>) – Custom cross-entropy loss function.</p></li>
+<li><p><strong>ln_loss</strong> (<em>callable</em>) – Custom Length-Norm-Loss function for extra regularization.</p></li>
+<li><p><strong>ln_wheight</strong> (<em>float</em>) – Weighting for the Length-Norm-Loss, range [0,1].</p></li>
+<li><p><strong>penalty_weight</strong> (<em>float</em>) – Weighting for the penalty loss, defaults to 0.</p></li>
+<li><p><strong>knet</strong> (<em>nn.Module</em><em>, </em><em>optional</em>) – Knowledge-Net model, determines the training phase.</p></li>
+<li><p><strong>prediction_only</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, only perform projection into latent space, no decoding, defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing evaluation metrics of current epoch, average cross-entropy loss, average Length-Norm-Loss, and the combined loss.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple(float, float, float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.models.generate_sequence">
+<span class="sig-prename descclassname"><span class="pre">dkst.models.</span></span><span class="sig-name descname"><span class="pre">generate_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditionals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mps'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_embedding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#generate_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.generate_sequence" title="Link to this definition"></a></dt>
+<dd><p>Generates a sequence of knowledge states using a trained decoder model.
+Predicts a knowledge structure from data observations or reconstructs K from response data observations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>nn.Module</em>) – Trained decoder model.</p></li>
+<li><p><strong>conditionals</strong> (<em>torch.Tensor</em>) – Conditional probabilities of underlying parametarized knowledge structure.</p></li>
+<li><p><strong>device</strong> (<em>str</em>) – Device to use for inference, defaults to “mps”.</p></li>
+<li><p><strong>max_length</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum length of the generated sequence, defaults to the maximum possible sequence length of identified domain.</p></li>
+<li><p><strong>data_embedding</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – Data embedding, defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing the generated sequence and corresponding embedding.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple(list, torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.models.generate_sequence_MCDP">
+<span class="sig-prename descclassname"><span class="pre">dkst.models.</span></span><span class="sig-name descname"><span class="pre">generate_sequence_MCDP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditionals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mps'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_embedding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_mc_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#generate_sequence_MCDP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.generate_sequence_MCDP" title="Link to this definition"></a></dt>
+<dd><p>Generates a sequence of knowledge states using a trained decoder model with Monte Carlo Dropout (MCDP).
+Predicts a knowledge structure from data observations or reconstructs K from response data observations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>nn.Module</em>) – Trained decoder model.</p></li>
+<li><p><strong>conditionals</strong> (<em>torch.Tensor</em>) – Conditional probabilities of underlying parametarized knowledge structure.</p></li>
+<li><p><strong>device</strong> (<em>str</em>) – Device to use for inference, defaults to “mps”.</p></li>
+<li><p><strong>max_length</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum length of the generated sequence, defaults to the maximum possible sequence length of identified domain.</p></li>
+<li><p><strong>data_embedding</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – Data embedding, defaults to None.</p></li>
+<li><p><strong>n_mc_samples</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of Monte Carlo samples for dropout, defaults to 5.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing the generated sequence and corresponding embedding.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple(list, torch.Tensor)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.models.performance">
+<span class="sig-prename descclassname"><span class="pre">dkst.models.</span></span><span class="sig-name descname"><span class="pre">performance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regressor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_mc_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mps'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#performance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.performance" title="Link to this definition"></a></dt>
+<dd><p>Evaluate the performance of a trained decoder model using a given dataloader.
+Computes the accuracy, average symbolic difference, and standard deviation of the symbolic difference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>nn.Module</em>) – Trained decoder model.</p></li>
+<li><p><strong>dataloader</strong> (<em>torch.utils.data.DataLoader</em>) – DataLoader for the evaluation data.</p></li>
+<li><p><strong>regressor</strong> (<em>nn.Module</em><em>, </em><em>optional</em>) – Regressor model for data embedding, defaults to None.</p></li>
+<li><p><strong>num_samples</strong> (<em>int</em>) – Number of samples to evaluate, defaults to 100.</p></li>
+<li><p><strong>n_mc_samples</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of Monte Carlo samples for dropout, defaults to None.</p></li>
+<li><p><strong>log</strong> (<em>bool</em>) – Whether to log the performance metrics, defaults to False.</p></li>
+<li><p><strong>device</strong> (<em>str</em>) – Device to use for inference, defaults to “mps”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing the accuracy, average symmetric difference, and standard deviation of symmetric differences.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple(float, float, float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.models.save_model">
+<span class="sig-prename descclassname"><span class="pre">dkst.models.</span></span><span class="sig-name descname"><span class="pre">save_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#save_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.save_model" title="Link to this definition"></a></dt>
+<dd><p>Save a torch model and optimizer state to file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>nn.Module</em>) – Model to save.</p></li>
+<li><p><strong>optimizer</strong> (<em>torch.optim.Optimizer</em>) – Optimizer to save.</p></li>
+<li><p><strong>epoch</strong> (<em>int</em>) – Current epoch.</p></li>
+<li><p><strong>path</strong> (<em>str</em>) – Path to save the model and optimizer state.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.models.train">
+<span class="sig-prename descclassname"><span class="pre">dkst.models.</span></span><span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ce_loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ln_loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ln_wheight</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">penalty_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mps'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/models.html#train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.models.train" title="Link to this definition"></a></dt>
+<dd><p>Train K-net/decoder model for one epoch.
+Uses projection of conditional probabilities to hidden space in K-net training phase 1 (reconstruction).
+Uses regressor’s projection of data observations to hidden space in K-net training phase 2 (prediction).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>nn.Module</em>) – Decoder model to train.</p></li>
+<li><p><strong>train_loader</strong> (<em>torch.utils.data.DataLoader</em>) – DataLoader for the training data.</p></li>
+<li><p><strong>ce_loss</strong> (<em>callable</em>) – Custom cross-entropy loss function.</p></li>
+<li><p><strong>ln_loss</strong> (<em>callable</em>) – Custom Length-Norm-Loss function for extra regularization.</p></li>
+<li><p><strong>ln_wheight</strong> (<em>float</em>) – Weighting for the Length-Norm-Loss, range [0,1].</p></li>
+<li><p><strong>optimizer</strong> (<em>torch.optim.Optimizer</em>) – Optimizer for updating model parameters.</p></li>
+<li><p><strong>clip_norm</strong> (<em>float</em>) – Maximum norm for gradient clipping to prevent exploding gradients, defaults to 0, may be chosen in range [0,5] (?).</p></li>
+<li><p><strong>knet</strong> (<em>nn.Module</em><em>, </em><em>optional</em>) – Knowledge-Net model, determines the training phase.</p></li>
+<li><p><strong>prediction_only</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, only perform projection into latent space, no decoding, defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing training metrics of entire epoch, average cross-entropy loss, average Length-Norm-Loss, and the combined loss.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple(float, float, float)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 

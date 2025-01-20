@@ -46,10 +46,61 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="dkst.html">dkst package</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">dkst.utils</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#dkst-utils-dkst-utils">dkst.utils.DKST_utils</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#dkst-utils-kst-utils">dkst.utils.KST_utils</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#dkst-utils-relations">dkst.utils.relations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#dkst-utils-set-operations">dkst.utils.set_operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-dkst.utils.DKST_utils">dkst.utils.DKST_utils</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.DKST_utils.calculate_counts"><code class="docutils literal notranslate"><span class="pre">calculate_counts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.DKST_utils.check_config"><code class="docutils literal notranslate"><span class="pre">check_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.DKST_utils.create_state2idx"><code class="docutils literal notranslate"><span class="pre">create_state2idx()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.DKST_utils.decode_sequence"><code class="docutils literal notranslate"><span class="pre">decode_sequence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.DKST_utils.decode_sequences"><code class="docutils literal notranslate"><span class="pre">decode_sequences()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.DKST_utils.encode_sequence"><code class="docutils literal notranslate"><span class="pre">encode_sequence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.DKST_utils.encode_sequences"><code class="docutils literal notranslate"><span class="pre">encode_sequences()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.DKST_utils.pad_K"><code class="docutils literal notranslate"><span class="pre">pad_K()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.DKST_utils.pad_relations"><code class="docutils literal notranslate"><span class="pre">pad_relations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.DKST_utils.pad_sequences"><code class="docutils literal notranslate"><span class="pre">pad_sequences()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.DKST_utils.trim_K"><code class="docutils literal notranslate"><span class="pre">trim_K()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-dkst.utils.KST_utils">dkst.utils.KST_utils</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.blim"><code class="docutils literal notranslate"><span class="pre">blim()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.compute_conditionals"><code class="docutils literal notranslate"><span class="pre">compute_conditionals()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.compute_r"><code class="docutils literal notranslate"><span class="pre">compute_r()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.compute_rho"><code class="docutils literal notranslate"><span class="pre">compute_rho()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.extend_quasi_order"><code class="docutils literal notranslate"><span class="pre">extend_quasi_order()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.generate_all_surmise_relations"><code class="docutils literal notranslate"><span class="pre">generate_all_surmise_relations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.implications_to_states"><code class="docutils literal notranslate"><span class="pre">implications_to_states()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.sample_knowledge_structures"><code class="docutils literal notranslate"><span class="pre">sample_knowledge_structures()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.sample_response_data"><code class="docutils literal notranslate"><span class="pre">sample_response_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.sample_surmise_relations"><code class="docutils literal notranslate"><span class="pre">sample_surmise_relations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.sampling_quasiorders"><code class="docutils literal notranslate"><span class="pre">sampling_quasiorders()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.states_to_implications"><code class="docutils literal notranslate"><span class="pre">states_to_implications()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-dkst.utils.relations">dkst.utils.relations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.relations.S_to_matrix"><code class="docutils literal notranslate"><span class="pre">S_to_matrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.relations.is_antisymmetric"><code class="docutils literal notranslate"><span class="pre">is_antisymmetric()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.relations.is_reflexive"><code class="docutils literal notranslate"><span class="pre">is_reflexive()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.relations.is_transitive"><code class="docutils literal notranslate"><span class="pre">is_transitive()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.relations.matrix_to_S"><code class="docutils literal notranslate"><span class="pre">matrix_to_S()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.relations.transitive_closure"><code class="docutils literal notranslate"><span class="pre">transitive_closure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.relations.transitive_reduction"><code class="docutils literal notranslate"><span class="pre">transitive_reduction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.relations.transitive_reduction_matrix"><code class="docutils literal notranslate"><span class="pre">transitive_reduction_matrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.relations.transitive_reduction_tuples"><code class="docutils literal notranslate"><span class="pre">transitive_reduction_tuples()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-dkst.utils.set_operations">dkst.utils.set_operations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.set_operations.K_to_matrix"><code class="docutils literal notranslate"><span class="pre">K_to_matrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.set_operations.intersection_closure"><code class="docutils literal notranslate"><span class="pre">intersection_closure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.set_operations.is_intersection_closed"><code class="docutils literal notranslate"><span class="pre">is_intersection_closed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.set_operations.is_union_closed"><code class="docutils literal notranslate"><span class="pre">is_union_closed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.set_operations.matrix_to_K"><code class="docutils literal notranslate"><span class="pre">matrix_to_K()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.set_operations.powerset"><code class="docutils literal notranslate"><span class="pre">powerset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.set_operations.powerset_binary"><code class="docutils literal notranslate"><span class="pre">powerset_binary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.set_operations.sort_K"><code class="docutils literal notranslate"><span class="pre">sort_K()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.set_operations.sort_K_binary"><code class="docutils literal notranslate"><span class="pre">sort_K_binary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.set_operations.union_base"><code class="docutils literal notranslate"><span class="pre">union_base()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.set_operations.union_closure"><code class="docutils literal notranslate"><span class="pre">union_closure()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="dkst.dkst_datasets.html">dkst.dkst_datasets</a></li>
@@ -85,17 +136,883 @@
              
   <section id="dkst-utils">
 <h1>dkst.utils<a class="headerlink" href="#dkst-utils" title="Link to this heading"></a></h1>
-<section id="dkst-utils-dkst-utils">
-<h2>dkst.utils.DKST_utils<a class="headerlink" href="#dkst-utils-dkst-utils" title="Link to this heading"></a></h2>
+<section id="module-dkst.utils.DKST_utils">
+<span id="dkst-utils-dkst-utils"></span><h2>dkst.utils.DKST_utils<a class="headerlink" href="#module-dkst.utils.DKST_utils" title="Link to this heading"></a></h2>
+<p>DKST_utils.py</p>
+<p>This module provides functions for tokenization, padding of knowledge structures/ surmise relations.
+It also includes a method for aggregating response data by frequency and utility functions DKST datasets.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.DKST_utils.calculate_counts">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.DKST_utils.</span></span><span class="sig-name descname"><span class="pre">calculate_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response_patterns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state2idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">standadize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/DKST_utils.html#calculate_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.DKST_utils.calculate_counts" title="Link to this definition"></a></dt>
+<dd><p>Calculates the counts of all response patterns/ knowledge states in matrix notation.
+Can be used to aggregate observed response data by frequency as input to an ANN.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>response_patterns</strong> (<em>list</em><em>[</em><em>np.ndarray</em><em>[</em><em>int</em><em>]</em><em>] or </em><em>array-like</em><em> or </em><em>list</em><em>[</em><em>str</em><em>]</em>) – List of response patterns represented as binary vectors</p></li>
+<li><p><strong>state2idx</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – Dictionary mapping states to indices, created if not provided</p></li>
+<li><p><strong>standadize</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to standardize the counts, defaults to False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of counts (2 ** num_items) associated to all possible response patterns in conventional order</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.DKST_utils.check_config">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.DKST_utils.</span></span><span class="sig-name descname"><span class="pre">check_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/DKST_utils.html#check_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.DKST_utils.check_config" title="Link to this definition"></a></dt>
+<dd><p>Checks if a DKST dataset configuration is valid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>dict</em>) – Dataset configuration with all necessary parameters</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Whether the configuration is valid</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.DKST_utils.create_state2idx">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.DKST_utils.</span></span><span class="sig-name descname"><span class="pre">create_state2idx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eos_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'&lt;eos&gt;'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'&lt;pad&gt;'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/DKST_utils.html#create_state2idx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.DKST_utils.create_state2idx" title="Link to this definition"></a></dt>
+<dd><p>Creates an index for all elements of the powerset for |Q|=m in alphabetic notation and conventional order.
+Also includes “&lt;eos&gt;” and “&lt;pad&gt;” tokens.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>m</strong> (<em>int</em>) – Number of elements in the domain Q of interest.</p></li>
+<li><p><strong>eos_token</strong> (<em>str</em>) – Token to represent the end of a sequence, defaults to “&lt;eos&gt;”.</p></li>
+<li><p><strong>pad_token</strong> (<em>str</em>) – Token to represent padding, defaults to “&lt;pad&gt;”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary mapping states to indices.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.DKST_utils.decode_sequence">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.DKST_utils.</span></span><span class="sig-name descname"><span class="pre">decode_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx2state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/DKST_utils.html#decode_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.DKST_utils.decode_sequence" title="Link to this definition"></a></dt>
+<dd><p>Decodes a sequence of indices (tokens) to a sequence of knowledge states given a reverse dictionary for tokenization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sequence</strong> (<em>list</em><em>[</em><em>int</em><em>] or </em><em>array-like</em>) – Sequence of indices.</p></li>
+<li><p><strong>idx2state</strong> (<em>dict</em><em>[</em><em>int</em><em>, </em><em>str</em><em>]</em>) – Dictionary mapping indices to states.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>sequence of states</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.DKST_utils.decode_sequences">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.DKST_utils.</span></span><span class="sig-name descname"><span class="pre">decode_sequences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequences</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx2state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/DKST_utils.html#decode_sequences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.DKST_utils.decode_sequences" title="Link to this definition"></a></dt>
+<dd><p>Decodes a nested sequence of indices (tokens) to a nested sequence of knowledge states given a reverse dictionary for tokenization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sequences</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>int</em><em>]</em><em>] or </em><em>array-like</em>) – nested sequence of indices</p></li>
+<li><p><strong>idx2state</strong> (<em>dict</em><em>[</em><em>int</em><em>, </em><em>str</em><em>]</em>) – dictionary mapping indices to states</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>nested sequence of states</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[list[str]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.DKST_utils.encode_sequence">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.DKST_utils.</span></span><span class="sig-name descname"><span class="pre">encode_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state2idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/DKST_utils.html#encode_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.DKST_utils.encode_sequence" title="Link to this definition"></a></dt>
+<dd><p>Encodes a sequence of knowledge states as a sequence of indices given a dictionary for tokenization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sequence</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>array-like</em>) – Sequence of states.</p></li>
+<li><p><strong>state2idx</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – Dictionary mapping states to indices.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>sequence of indices</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.DKST_utils.encode_sequences">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.DKST_utils.</span></span><span class="sig-name descname"><span class="pre">encode_sequences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequences</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state2idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/DKST_utils.html#encode_sequences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.DKST_utils.encode_sequences" title="Link to this definition"></a></dt>
+<dd><p>Encodes a nested sequence of knowledge states as a nested sequence of indices given a dictionary for tokenization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sequences</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>] or </em><em>array-like</em>) – Nested sequence of states.</p></li>
+<li><p><strong>state2idx</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – Dictionary mapping states to indices.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Nested sequence of indices.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.DKST_utils.pad_K">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.DKST_utils.</span></span><span class="sig-name descname"><span class="pre">pad_K</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/DKST_utils.html#pad_K"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.DKST_utils.pad_K" title="Link to this definition"></a></dt>
+<dd><p>Pad a binary knowledge structure in matrix notation to uniform length 2**2**|Q| by adding zero-states.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>matrix</strong> (<em>np.ndarray</em><em> or </em><em>list</em><em>[</em><em>list</em><em>[</em><em>int</em><em>]</em><em>]</em>) – Binary knowledge structure in matrix notation |K| x |Q|.</p></li>
+<li><p><strong>m</strong> (<em>int</em>) – Domain size for padding, automatically inferred from the given knowledge structure at default.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Padded binary knowledge structure in matrix notation 2**|Q| x |Q|.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.DKST_utils.pad_relations">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.DKST_utils.</span></span><span class="sig-name descname"><span class="pre">pad_relations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/DKST_utils.html#pad_relations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.DKST_utils.pad_relations" title="Link to this definition"></a></dt>
+<dd><p>Pad a list of binary surmise relation matrices to the same size by adding zeros.
+The result is a 3D array of shape (M, M, N) where M is the maximum number of items in the domain and N is the number of input matrices
+(E.g. [[1,2],[3,4]] -&gt; [[1,2,0,0], [3,4,0,0], [0,0,0,0], [0,0,0,0]] for M=4).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>matrices</strong> (<em>list</em><em>[</em><em>np.ndarray</em><em>] or  </em><em>list</em><em>[</em><em>list</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em><em>]</em><em>]</em>) – list of binary surmise relation matrices or list of sets of tuples for the relation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>3D array of padded binary surmise relation matrices.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.DKST_utils.pad_sequences">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.DKST_utils.</span></span><span class="sig-name descname"><span class="pre">pad_sequences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequences</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'&lt;pad&gt;'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eos_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'&lt;eos&gt;'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vocab_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/DKST_utils.html#pad_sequences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.DKST_utils.pad_sequences" title="Link to this definition"></a></dt>
+<dd><p>Pads a list of sequences of knowledge states (in alphabetic notation) to the maximum number of states in the respective domain.
+Also adds an &lt;eos&gt; token and ensures the empty state is included.
+The result is a 2D array of shape (N, K) where N is the number of input sequences (ordered) and K is the maximum sequence length (n states +1).
+(E.g. [“c”,”bc”,”abc”] -&gt; [“”, “c”,”bc”,”abc”,”&lt;eos&gt;””&lt;pad&gt;”,”&lt;pad&gt;”,”&lt;pad&gt;”,”&lt;pad&gt;”,”&lt;pad&gt;”,”&lt;pad&gt;”]  for M=3).</p>
+<p>Note: All items need to be included in the sequneces if vocab_size is None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sequences</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>str</em><em>]</em><em>] or </em><em>array-like</em>) – List of sequences of knowledge states.</p></li>
+<li><p><strong>pad_token</strong> (<em>str</em>) – Token to represent padding.</p></li>
+<li><p><strong>vocab_size</strong> (<em>int</em>) – Number of unique states in the domain.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>2D array of padded sequences.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.DKST_utils.trim_K">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.DKST_utils.</span></span><span class="sig-name descname"><span class="pre">trim_K</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/DKST_utils.html#trim_K"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.DKST_utils.trim_K" title="Link to this definition"></a></dt>
+<dd><p>Removes trailing zero rows from a binary knowledge structure in matrix notation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>matrix</strong> (<em>np.ndarray</em>) – Padded knowledge structure in matrix notation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Trimmed binary knowledge structure in matrix notation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
-<section id="dkst-utils-kst-utils">
-<h2>dkst.utils.KST_utils<a class="headerlink" href="#dkst-utils-kst-utils" title="Link to this heading"></a></h2>
+<section id="module-dkst.utils.KST_utils">
+<span id="dkst-utils-kst-utils"></span><h2>dkst.utils.KST_utils<a class="headerlink" href="#module-dkst.utils.KST_utils" title="Link to this heading"></a></h2>
+<p>KST_utils.py</p>
+<p>This module provides functions to generate, sample, manipulate, and visualize knowledge structures and quasiorders,
+and to to convert between them. Relevant combinatoric vaues are also included,
+for the number of posets, prosets, knowledge spaces and general knowledge structures and states for domain size &lt;10.</p>
+<p>Note on notation:
+- Knowledge state k is represented either as string of respective item (e.g. “abd”), or as a binary vector (e.g. 11010).
+- Knowledge structure K may be a list of states (alphabetically ordered), or a binary states matrix.
+- Quasiorder S can be represented as list of string-tuples (alphabeticly ordered implication pairs), or as binary adjacency matrix.</p>
+<p>To do:
+- representative sampling of knowledge spaces.
+- check again paremeter types in docstrings and test cases…
+- introduce consistent naming conventions knowledge_structure quasiorder vs. surmise_relation vs quasi_order, also in the other modules…
+- work with 3D arrays instead of lists of uniform arrays where possible.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.KST_utils.blim">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.KST_utils.</span></span><span class="sig-name descname"><span class="pre">blim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/KST_utils.html#blim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.KST_utils.blim" title="Link to this definition"></a></dt>
+<dd><p>Samples binary response patterns from a knowledge structure using the Basic Local Independence Model (BLIM).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>K</strong> (<em>numpy.ndarray</em>) – Knowledge structure represented as an ordered (!) binary matrix (n x m), may be padded with empty states.</p></li>
+<li><p><strong>num_samples</strong> (<em>int</em>) – Number of response patterns to sample.</p></li>
+<li><p><strong>p_k</strong> (<em>array-like</em>) – Prior probabilities of knowledge states (default is uniform).</p></li>
+<li><p><strong>beta</strong> (<em>float</em><em> or </em><em>array-like</em>) – Probabilities of careless errors (default is 0.1 per item).</p></li>
+<li><p><strong>eta</strong> (<em>float</em><em> or </em><em>array-like</em>) – Probabilities of lucky guesses (default is 0.1 per item).</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – Seed for random number generation (optional).</p></li>
+<li><p><strong>factor</strong> (<em>float</em>) – Factor for random variation of beta and eta values (optional), None for constant error rates.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Matrix with sampled response patterns represented as binary row vectors.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.KST_utils.compute_conditionals">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.KST_utils.</span></span><span class="sig-name descname"><span class="pre">compute_conditionals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">powerset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/KST_utils.html#compute_conditionals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.KST_utils.compute_conditionals" title="Link to this definition"></a></dt>
+<dd><p>Computes the conditional probabilities of all response patterns given a knowledge structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>K</strong> (<em>numpy.ndarray</em>) – Knowledge structure represented as an ordered (!) binary matrix (n x m), may be padded with empty states.</p></li>
+<li><p><strong>p_k</strong> (<em>array-like</em>) – Prior probabilities of knowledge states (default is uniform).</p></li>
+<li><p><strong>beta</strong> (<em>float</em><em> or </em><em>array-like</em>) – Probabilities of careless errors (default is 0.1 per item).</p></li>
+<li><p><strong>eta</strong> (<em>float</em><em> or </em><em>array-like</em>) – Probabilities of lucky guesses (default is 0.1 per item).</p></li>
+<li><p><strong>factor</strong> (<em>float</em>) – Factor for random variation of beta and eta values (optional), None for constant error rates.</p></li>
+<li><p><strong>powerset</strong> (<em>numpy.ndarray</em>) – Powerset of binary vectors (optional), generated if not provided.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of conditional probabilities for all response patterns given the knowledge structure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.KST_utils.compute_r">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.KST_utils.</span></span><span class="sig-name descname"><span class="pre">compute_r</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/KST_utils.html#compute_r"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.KST_utils.compute_r" title="Link to this definition"></a></dt>
+<dd><p>Computes the probability of the response pattern R given the knowledge state k and error rates beta and eta.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>R</strong> (<em>Numpy.array.</em>) – Response pattern as a binary vector.</p></li>
+<li><p><strong>K</strong> (<em>Numpy.array.</em>) – Knowledge state as a binary vector.</p></li>
+<li><p><strong>beta</strong> (<em>Float</em><em> (</em><em>if constant</em><em>)</em><em>, or </em><em>array-like.</em>) – Probability of a careless error.</p></li>
+<li><p><strong>eta</strong> (<em>Float</em><em> (</em><em>if constant</em><em>)</em><em>, or </em><em>array-like</em>) – Probability of a lucky guess.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Probability of the response pattern R given the knowledge state k.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Float.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.KST_utils.compute_rho">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.KST_utils.</span></span><span class="sig-name descname"><span class="pre">compute_rho</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/KST_utils.html#compute_rho"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.KST_utils.compute_rho" title="Link to this definition"></a></dt>
+<dd><p>Computes the conditional probability of a response pattern R given a set of knowledge states in binary matrix notation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>R</strong> (<em>Numpy.array.</em>) – Response pattern as a binary vector.</p></li>
+<li><p><strong>K_matrix</strong> (<em>Numpy.array.</em>) – Knowledge structure represented as a binary matrix (n x m), possibly flattened or padded with empty states.</p></li>
+<li><p><strong>beta</strong> (<em>Float</em><em> (</em><em>if constant</em><em>) or </em><em>array-like.</em>) – Probabilities of careless errors for each item.</p></li>
+<li><p><strong>eta</strong> (<em>Float</em><em> (</em><em>if constant</em><em>) or </em><em>array-like.</em>) – Probabilities of lucky guesses for each item.</p></li>
+<li><p><strong>p_K</strong> (<em>Array-like.</em>) – Prior probabilities for each knowledge state (default is uniform).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Conditional probability of the response pattern R given the knowledge structure K.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Float.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.KST_utils.extend_quasi_order">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.KST_utils.</span></span><span class="sig-name descname"><span class="pre">extend_quasi_order</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_quasi_order</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/KST_utils.html#extend_quasi_order"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.KST_utils.extend_quasi_order" title="Link to this definition"></a></dt>
+<dd><p>Extend a given quasi-order by one item, ensuring transitivity.
+This generates all possible extensions of a quasi-order given in binary square matrix notation.
+The implementation follows Ünlü, A., &amp; Schrepp, M. (2017). Techniques for sampling quasi-orders. Arch. Data Sci. A, 2, 163-182.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>base_quasi_order</strong> (<em>numpy.ndarray</em>) – Binary square matrix representing a quasi-order.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of extended quasi-orders.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[numpy.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.KST_utils.generate_all_surmise_relations">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.KST_utils.</span></span><span class="sig-name descname"><span class="pre">generate_all_surmise_relations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">antisymmetric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/KST_utils.html#generate_all_surmise_relations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.KST_utils.generate_all_surmise_relations" title="Link to this definition"></a></dt>
+<dd><p>Generates all valid surmise relations for a given domain size n (feasable between 2 and 5)
+A surmise relation is a binary square matrix that represents a quasi-order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – Number of items in the domain.</p></li>
+<li><p><strong>antisymmetric</strong> (<em>bool</em>) – Whether to generate only antisymmetric surmise relations.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of valid surmise relations.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[numpy.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.KST_utils.implications_to_states">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.KST_utils.</span></span><span class="sig-name descname"><span class="pre">implications_to_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/KST_utils.html#implications_to_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.KST_utils.implications_to_states" title="Link to this definition"></a></dt>
+<dd><p>Transforms a surmise relation into the corresponding quasi-ordinal knowledge space.
+This function is based on an implementation from the kst package by Milan Segedinac,
+see <a class="reference external" href="https://github.com/milansegedinac/kst/blob/master/learning_spaces/kst/imp2state.py">https://github.com/milansegedinac/kst/blob/master/learning_spaces/kst/imp2state.py</a> !</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>S</strong> – Numpy array or list of str-tuples representing a surmise relation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Corresponding quasiordinal knowledge space represented as binary numpy matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.KST_utils.sample_knowledge_structures">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.KST_utils.</span></span><span class="sig-name descname"><span class="pre">sample_knowledge_structures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_dublicates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/KST_utils.html#sample_knowledge_structures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.KST_utils.sample_knowledge_structures" title="Link to this definition"></a></dt>
+<dd><p>Generates a representative sample of knowledge structures in binary notation for a given domain size m.
+First target cardinalities are sampled according to a binomial distribution, then structures are sampled with equal probability for each state.
+The resulting dataset may be used for training and testing DL models on general knowledge structures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>m</strong> (<em>int</em>) – Number of items in the domain.</p></li>
+<li><p><strong>num_samples</strong> (<em>int</em>) – Number of knowledge structures to sample.</p></li>
+<li><p><strong>no_dublicates</strong> (<em>bool</em>) – Whether to include no duplicate structures in the dataset.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dataset of the sampled knowledge structures as a 3D numpy array, rows representing states, columns corresponding to items.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.KST_utils.sample_response_data">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.KST_utils.</span></span><span class="sig-name descname"><span class="pre">sample_response_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knowledge_structures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/KST_utils.html#sample_response_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.KST_utils.sample_response_data" title="Link to this definition"></a></dt>
+<dd><p>Samples binary response patterns from a list of knowledge structures using the Basic Local Independence Model (BLIM).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>knowledge_structures</strong> (<em>list</em><em>[</em><em>numpy.ndarray</em><em>] or </em><em>np.ndarray</em>) – List of knowledge structures in matrix notation, may be padded with empty states</p></li>
+<li><p><strong>num_samples</strong> (<em>int</em><em> or </em><em>array-like</em>) – Number of response patterns to sample</p></li>
+<li><p><strong>p_k</strong> (<em>list</em><em>[</em><em>np.ndarray</em><em>] or </em><em>array-like</em><em> (</em><em>?</em><em>)</em>) – Prior probabilities of knowledge states (default is uniform)</p></li>
+<li><p><strong>beta</strong> (<em>float</em><em>, </em><em>array-like</em><em> or </em><em>np.ndarray</em>) – Probabilities of careless errors (default is 0.1 per item)</p></li>
+<li><p><strong>eta</strong> (<em>float</em><em>, </em><em>array-like</em><em> or </em><em>np.ndarray</em>) – Probabilities of lucky guesses (default is 0.1 per item)</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – Seed for random number generation (optional)</p></li>
+<li><p><strong>factor</strong> (<em>float</em>) – Factor for random variation of beta and eta values (optional), None for constant error rates.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of matrices with sampled response patterns represented as binary row vectors</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[numpy.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.KST_utils.sample_surmise_relations">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.KST_utils.</span></span><span class="sig-name descname"><span class="pre">sample_surmise_relations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">antisymmetric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/KST_utils.html#sample_surmise_relations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.KST_utils.sample_surmise_relations" title="Link to this definition"></a></dt>
+<dd><p>Samples surmise relations for n items given a corresponding base set for n-1 items using the Inductive Uniform Extension Approach.
+The implementation follows Ünlü, A., &amp; Schrepp, M. (2017). Techniques for sampling quasi-orders. Arch. Data Sci. A, 2, 163-182.
+If the base set is exhaustive for n-1 items, this function generates all possible surmise relations for n items.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_set</strong> (<em>list</em><em>[</em><em>numpy.ndarray</em><em>]</em>) – List of quasi-orders for n-1 items to be extended.</p></li>
+<li><p><strong>num_samples</strong> (<em>int</em>) – Maximum number of quasi-orders to sample.</p></li>
+<li><p><strong>antisymmetric</strong> (<em>bool</em>) – Whether to sample only antisymmetric quasi-orders.</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – Seed for random number generation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of sampled quasi-orders in binary matrix notation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[numpy.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.KST_utils.sampling_quasiorders">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.KST_utils.</span></span><span class="sig-name descname"><span class="pre">sampling_quasiorders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6942</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_items</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_items</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">antisymmetric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/KST_utils.html#sampling_quasiorders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.KST_utils.sampling_quasiorders" title="Link to this definition"></a></dt>
+<dd><p>Function to test and visualize the representative sampling of surmise relations for a given interval of domain sizes.</p>
+<p>Note: When training a DL model on these structures, it is recommended to (re)sample independantly for each domain size,
+as a base set and its extension may be correlated and limit the diversity of the dataset or even representativeness across domain sizes?</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> (<em>int</em>) – Seed for random number generation (optional).</p></li>
+<li><p><strong>n_samples</strong> (<em>int</em>) – Maximum number of samples to generate for each domain size.</p></li>
+<li><p><strong>max_items</strong> (<em>int</em>) – Maximum domain size to sample relations for.</p></li>
+<li><p><strong>min_items</strong> (<em>int</em>) – Minimum domain size to sample relations for.</p></li>
+<li><p><strong>antisymmetric</strong> (<em>bool</em>) – Whether to sample only antisymmetric relations.</p></li>
+<li><p><strong>plot</strong> (<em>bool</em>) – Whether to plot histograms of the sampled relations to visualize the distribution of cardinalities.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Nested list of sampled surmise relations in binary matrix notation, one list for each domain size.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[list[numpy.ndarray]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.KST_utils.states_to_implications">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.KST_utils.</span></span><span class="sig-name descname"><span class="pre">states_to_implications</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/KST_utils.html#states_to_implications"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.KST_utils.states_to_implications" title="Link to this definition"></a></dt>
+<dd><p>Inverse transformation from a quasiordinal set of knowledge states to a surmise relation matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>states</strong> – Quasiordinal knowledge structure in binary matrix notation or as list of states.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy array representing the surmise relation</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
-<section id="dkst-utils-relations">
-<h2>dkst.utils.relations<a class="headerlink" href="#dkst-utils-relations" title="Link to this heading"></a></h2>
+<section id="module-dkst.utils.relations">
+<span id="dkst-utils-relations"></span><h2>dkst.utils.relations<a class="headerlink" href="#module-dkst.utils.relations" title="Link to this heading"></a></h2>
+<p>relations.py</p>
+<p>This module provides functions to determine if a given relation is reflexive, transitive or antisymmetric.
+It also provides functions to compute the transitive closure/reduction of a binary relation and sort it in matrix notation.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.relations.S_to_matrix">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.relations.</span></span><span class="sig-name descname"><span class="pre">S_to_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/relations.html#S_to_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.relations.S_to_matrix" title="Link to this definition"></a></dt>
+<dd><p>Convert a quasiorder S to a square binary matrix.</p>
+<p>A quasiorder is a list of tuples (i, j) where i precedes j in the quasiorder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>S</strong> (<em>list</em><em>[</em><em>tuple</em><em>[</em><em>char</em><em>, </em><em>char</em><em>]</em><em>]</em>) – A quasiorder.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The square binary matrix representation of the quasiorder.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.relations.is_antisymmetric">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.relations.</span></span><span class="sig-name descname"><span class="pre">is_antisymmetric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/relations.html#is_antisymmetric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.relations.is_antisymmetric" title="Link to this definition"></a></dt>
+<dd><p>Check if the given square binary matrix is antisymmetric.</p>
+<p>A matrix is antisymmetric if for all i, j: if matrix[i][j] = 1 and i ≠ j,
+then matrix[j][i] must be 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>matrix</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>int</em><em>]</em><em>]</em>) – A square binary matrix (list of lists).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the matrix is antisymmetric, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.relations.is_reflexive">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.relations.</span></span><span class="sig-name descname"><span class="pre">is_reflexive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/relations.html#is_reflexive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.relations.is_reflexive" title="Link to this definition"></a></dt>
+<dd><p>Check if the given square binary matrix is reflexive.</p>
+<p>A matrix is reflexive if all diagonal elements are 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>matrix</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>int</em><em>]</em><em>]</em>) – A square binary matrix (list of lists).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the matrix is reflexive, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.relations.is_transitive">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.relations.</span></span><span class="sig-name descname"><span class="pre">is_transitive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/relations.html#is_transitive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.relations.is_transitive" title="Link to this definition"></a></dt>
+<dd><p>Check if the given square binary matrix is transitive.</p>
+<p>A matrix is transitive if for all i, j, k, if matrix[i][j] == 1 and matrix[j][k] == 1,
+then matrix[i][k] must also be 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>matrix</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>int</em><em>]</em><em>]</em>) – A square binary matrix (list of lists).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the matrix is transitive, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.relations.matrix_to_S">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.relations.</span></span><span class="sig-name descname"><span class="pre">matrix_to_S</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_reflexive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/relations.html#matrix_to_S"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.relations.matrix_to_S" title="Link to this definition"></a></dt>
+<dd><p>Convert a square binary matrix to a quasiorder in set representation.</p>
+<p>A quasiorder is a list of tuples (i, j) where i precedes j in the quasiorder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>matrix</strong> (<em>np.ndarray</em>) – A square binary matrix.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The quasiorder representation of the matrix.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[tuple[char, char]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.relations.transitive_closure">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.relations.</span></span><span class="sig-name descname"><span class="pre">transitive_closure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/relations.html#transitive_closure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.relations.transitive_closure" title="Link to this definition"></a></dt>
+<dd><p>Compute the transitive closure of a given binary relation in matrix notation or set notation, using the Warshall’s algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>matrix</strong> (<em>np.ndarray</em><em> or </em><em>list</em><em>[</em><em>tuple</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>]</em>) – A square binary matrix or a list of tuples representing a binary relation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The transitive closure of the given binary relation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray or list[tuple[str, str]], respectively, matching the input type.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.relations.transitive_reduction">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.relations.</span></span><span class="sig-name descname"><span class="pre">transitive_reduction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/relations.html#transitive_reduction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.relations.transitive_reduction" title="Link to this definition"></a></dt>
+<dd><p>Compute the transitive reduction of a given binary relation.
+If the input is in set notation, transitive_reduction_tuples is executed.
+If the input is in matrix notation, transitive_reduction_matrix is executed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>matrix</strong> (<em>np.ndarray</em><em> | </em><em>list</em><em>[</em><em>tuple</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>]</em>) – A square binary matrix or a list of tuples representing a binary relation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The transitive reduction of given binary relation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray | list[tuple[str, str]], depending on the input</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.relations.transitive_reduction_matrix">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.relations.</span></span><span class="sig-name descname"><span class="pre">transitive_reduction_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/relations.html#transitive_reduction_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.relations.transitive_reduction_matrix" title="Link to this definition"></a></dt>
+<dd><p>Compute the transitive reduction of a given binary relation in matrix notation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>matrix</strong> (<em>np.ndarray</em>) – A square binary matrix representing a binary relation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The transitive reduction of given binary relation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.relations.transitive_reduction_tuples">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.relations.</span></span><span class="sig-name descname"><span class="pre">transitive_reduction_tuples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relations</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/relations.html#transitive_reduction_tuples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.relations.transitive_reduction_tuples" title="Link to this definition"></a></dt>
+<dd><p>Compute the transitive reduction of a binary relation represented as a list of tuples.</p>
+<p>Note: Does not preserve the order of the input tuples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>relations</strong> (<em>list</em><em>[</em><em>tuple</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>]</em>) – A list of tuples representing the binary relation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The transitive reduction of the given binary relation as a list of tuples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[tuple[str, str]]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
-<section id="dkst-utils-set-operations">
-<h2>dkst.utils.set_operations<a class="headerlink" href="#dkst-utils-set-operations" title="Link to this heading"></a></h2>
+<section id="module-dkst.utils.set_operations">
+<span id="dkst-utils-set-operations"></span><h2>dkst.utils.set_operations<a class="headerlink" href="#module-dkst.utils.set_operations" title="Link to this heading"></a></h2>
+<p>set_operations.py</p>
+<p>This module provides functions to determine if a given set of string subsets is union-closed and intersection-closed,
+and to compute the union closure and intersection closure of a set of string subsets.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.set_operations.K_to_matrix">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.set_operations.</span></span><span class="sig-name descname"><span class="pre">K_to_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sets</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/set_operations.html#K_to_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.set_operations.K_to_matrix" title="Link to this definition"></a></dt>
+<dd><p>Convert a knowledge structure K from alphabetic set notation into a binary matrix.
+Can be used for only the base of a knowledge structure or for the entire knowledge structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sets</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – A knowledge structure (sorted).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The binary matrix representation of the knowledge structure (sorted).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.set_operations.intersection_closure">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.set_operations.</span></span><span class="sig-name descname"><span class="pre">intersection_closure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sets</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/set_operations.html#intersection_closure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.set_operations.intersection_closure" title="Link to this definition"></a></dt>
+<dd><p>Compute the intersection closure of a given set of string subsets.</p>
+<p>The intersection closure of a set is the smallest intersection-closed set containing all original subsets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sets</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – A list of subsets represented as strings.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The intersection-closed set containing all possible intersections of subsets.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.set_operations.is_intersection_closed">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.set_operations.</span></span><span class="sig-name descname"><span class="pre">is_intersection_closed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sets</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/set_operations.html#is_intersection_closed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.set_operations.is_intersection_closed" title="Link to this definition"></a></dt>
+<dd><p>Check if the given set of string subsets is intersection-closed.</p>
+<p>A set of string subsets is intersection-closed if the intersection of characters from any two subsets within the set,
+when sorted, is also a subset within the set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sets</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – A list of subsets represented as strings.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the set of subsets is intersection-closed, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.set_operations.is_union_closed">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.set_operations.</span></span><span class="sig-name descname"><span class="pre">is_union_closed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sets</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/set_operations.html#is_union_closed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.set_operations.is_union_closed" title="Link to this definition"></a></dt>
+<dd><p>Check if the given set is union-closed. The set can be either a list of string subsets
+or a binary matrix (numpy array) where rows represent knowledge states and columns represent items.</p>
+<p>A set is union-closed if the union of any two subsets (or knowledge states) results in a subset
+(or knowledge state) that is also in the set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sets</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>numpy.ndarray</em>) – A list of subsets represented as strings, or a binary matrix (numpy array).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the set is union-closed, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.set_operations.matrix_to_K">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.set_operations.</span></span><span class="sig-name descname"><span class="pre">matrix_to_K</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/set_operations.html#matrix_to_K"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.set_operations.matrix_to_K" title="Link to this definition"></a></dt>
+<dd><p>Convert a binary matrix into a knowledge structure K in alphabetic set notation.
+Can be used for only the base of a knowledge structure or for the entire knowledge structure.
+Respects the order of given knowledge states.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>matrix</strong> (<em>np.ndarray</em>) – A binary matrix (numpy array), possibly padded with trailing zero rows.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The knowledge structure representation of the matrix.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.set_operations.powerset">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.set_operations.</span></span><span class="sig-name descname"><span class="pre">powerset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/set_operations.html#powerset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.set_operations.powerset" title="Link to this definition"></a></dt>
+<dd><p>Generate the powerset of a given domain size m in alphabetical set notation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>m</strong> (<em>int</em>) – The domain size.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The powerset of the domain as ordered list of strings.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.set_operations.powerset_binary">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.set_operations.</span></span><span class="sig-name descname"><span class="pre">powerset_binary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/set_operations.html#powerset_binary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.set_operations.powerset_binary" title="Link to this definition"></a></dt>
+<dd><p>Generate the list of all possible combinations of 0s and 1s of length m.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>m</strong> (<em>int</em>) – Length of the binary vectors</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of binary vectors</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.set_operations.sort_K">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.set_operations.</span></span><span class="sig-name descname"><span class="pre">sort_K</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sets</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/set_operations.html#sort_K"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.set_operations.sort_K" title="Link to this definition"></a></dt>
+<dd><p>Sorts a given set or list of strings by length and alphabetically and returns the sorted knowledge structure as list.
+Induces the same order as sort_K_binary() for the corresponding knowledge structure in binary matrix notation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sets</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – A list of strings representing knowledge states.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sorted list of strings representing knowledge states.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.set_operations.sort_K_binary">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.set_operations.</span></span><span class="sig-name descname"><span class="pre">sort_K_binary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/set_operations.html#sort_K_binary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.set_operations.sort_K_binary" title="Link to this definition"></a></dt>
+<dd><p>Sorts a given binary matrix by the sum of the elements in each row and the integer value represented by a row in binary code.
+Induces the same order as sort_K() for the corresponding knowledge structure in set notation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>matrix</strong> (<em>numpy.ndarray</em>) – A binary matrix (numpy array).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A row-wise sorted binary matrix.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.set_operations.union_base">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.set_operations.</span></span><span class="sig-name descname"><span class="pre">union_base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/set_operations.html#union_base"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.set_operations.union_base" title="Link to this definition"></a></dt>
+<dd><p>Computes the base of a knowledge space using the Dowling 1993 algorithm, see also Falmagne &amp; Doignon 2011.
+It automatically infers the domain from the input sets, if not specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sets</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – A list of subsets representing states in the knowledge space.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of subsets representing the base of the knowledge space.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.set_operations.union_closure">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.set_operations.</span></span><span class="sig-name descname"><span class="pre">union_closure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sets</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/set_operations.html#union_closure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.set_operations.union_closure" title="Link to this definition"></a></dt>
+<dd><p>Compute the union closure of a given set of string subsets.</p>
+<p>The union closure of a set is the smallest union-closed set containing all original subsets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sets</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – A list of subsets represented as strings.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The union-closed set containing all possible unions of subsets.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 

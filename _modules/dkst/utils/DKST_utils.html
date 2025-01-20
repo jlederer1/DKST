@@ -1,0 +1,463 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dkst.utils.DKST_utils &mdash; dkst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            dkst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../dkst.html">dkst package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">dkst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dkst.utils.DKST_utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dkst.utils.DKST_utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">DKST_utils.py</span>
+
+<span class="sd">This module provides functions for tokenization, padding of knowledge structures/ surmise relations. </span>
+<span class="sd">It also includes a method for aggregating response data by frequency and utility functions DKST datasets.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Standard library imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+<span class="c1"># Local imports </span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dkst.utils.relations</span><span class="w"> </span><span class="kn">import</span> <span class="n">S_to_matrix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dkst.utils.set_operations</span><span class="w"> </span><span class="kn">import</span> <span class="n">powerset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dkst.utils.set_operations</span><span class="w"> </span><span class="kn">import</span> <span class="n">matrix_to_K</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dkst.utils.KST_utils</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span> 
+<span class="c1"># Third-party imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<span class="c1"># tokenization</span>
+<div class="viewcode-block" id="create_state2idx">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.DKST_utils.create_state2idx">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_state2idx</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">eos_token</span><span class="o">=</span><span class="s2">&quot;&lt;eos&gt;&quot;</span><span class="p">,</span> <span class="n">pad_token</span><span class="o">=</span><span class="s2">&quot;&lt;pad&gt;&quot;</span><span class="p">):</span>  
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates an index for all elements of the powerset for \\|Q\\|=m in alphabetic notation and conventional order.</span>
+<span class="sd">    Also includes &quot;&lt;eos&gt;&quot; and &quot;&lt;pad&gt;&quot; tokens.</span>
+<span class="sd">    </span>
+<span class="sd">    :param m: Number of elements in the domain Q of interest.</span>
+<span class="sd">    :type m: int</span>
+<span class="sd">    :param eos_token: Token to represent the end of a sequence, defaults to &quot;&lt;eos&gt;&quot;.</span>
+<span class="sd">    :type eos_token: str</span>
+<span class="sd">    :param pad_token: Token to represent padding, defaults to &quot;&lt;pad&gt;&quot;.</span>
+<span class="sd">    :type pad_token: str</span>
+<span class="sd">    </span>
+<span class="sd">    :return: Dictionary mapping states to indices.</span>
+<span class="sd">    :rtype: dict[str, int]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">powerset_list</span> <span class="o">=</span> <span class="n">powerset</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="n">state2idx</span> <span class="o">=</span> <span class="p">{</span><span class="n">state</span><span class="p">:</span> <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">state</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">powerset_list</span><span class="p">)}</span>
+    <span class="n">state2idx</span><span class="p">[</span><span class="n">eos_token</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="n">m</span>
+    <span class="n">state2idx</span><span class="p">[</span><span class="n">pad_token</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">state2idx</span></div>
+
+
+<div class="viewcode-block" id="encode_sequence">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.DKST_utils.encode_sequence">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span> <span class="n">state2idx</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Encodes a sequence of knowledge states as a sequence of indices given a dictionary for tokenization.</span>
+<span class="sd">    </span>
+<span class="sd">    :param sequence: Sequence of states.</span>
+<span class="sd">    :type sequence: list[str] or array-like</span>
+<span class="sd">    :param state2idx: Dictionary mapping states to indices.</span>
+<span class="sd">    :type state2idx: dict[str, int]</span>
+<span class="sd">    </span>
+<span class="sd">    :return: sequence of indices</span>
+<span class="sd">    :rtype: list[int]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">state2idx</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">sequence</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="decode_sequence">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.DKST_utils.decode_sequence">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span> <span class="n">idx2state</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decodes a sequence of indices (tokens) to a sequence of knowledge states given a reverse dictionary for tokenization.</span>
+<span class="sd">    </span>
+<span class="sd">    :param sequence: Sequence of indices.</span>
+<span class="sd">    :type sequence: list[int] or array-like</span>
+<span class="sd">    :param idx2state: Dictionary mapping indices to states.</span>
+<span class="sd">    :type idx2state: dict[int, str]</span>
+<span class="sd">    </span>
+<span class="sd">    :return: sequence of states</span>
+<span class="sd">    :rtype: list[str]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">encode_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span> <span class="n">idx2state</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="encode_sequences">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.DKST_utils.encode_sequences">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_sequences</span><span class="p">(</span><span class="n">sequences</span><span class="p">,</span> <span class="n">state2idx</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Encodes a nested sequence of knowledge states as a nested sequence of indices given a dictionary for tokenization.</span>
+<span class="sd">    </span>
+<span class="sd">    :param sequences: Nested sequence of states.</span>
+<span class="sd">    :type sequences: list[list[str]] or array-like</span>
+<span class="sd">    :param state2idx: Dictionary mapping states to indices.</span>
+<span class="sd">    :type state2idx: dict[str, int]</span>
+<span class="sd">    </span>
+<span class="sd">    :return: Nested sequence of indices.</span>
+<span class="sd">    :rtype: np.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">encode_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span> <span class="n">state2idx</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">sequence</span> <span class="ow">in</span> <span class="n">sequences</span>
+    <span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="decode_sequences">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.DKST_utils.decode_sequences">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_sequences</span><span class="p">(</span><span class="n">sequences</span><span class="p">,</span> <span class="n">idx2state</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decodes a nested sequence of indices (tokens) to a nested sequence of knowledge states given a reverse dictionary for tokenization.</span>
+<span class="sd">    </span>
+<span class="sd">    :param sequences: nested sequence of indices</span>
+<span class="sd">    :type sequences: list[list[int]] or array-like</span>
+<span class="sd">    :param idx2state: dictionary mapping indices to states</span>
+<span class="sd">    :type idx2state: dict[int, str]</span>
+<span class="sd">    </span>
+<span class="sd">    :return: nested sequence of states</span>
+<span class="sd">    :rtype: list[list[str]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">decode_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span> <span class="n">idx2state</span><span class="p">)</span> <span class="k">for</span> <span class="n">sequence</span> <span class="ow">in</span> <span class="n">sequences</span><span class="p">]</span></div>
+
+
+<span class="c1"># padding </span>
+<div class="viewcode-block" id="pad_relations">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.DKST_utils.pad_relations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pad_relations</span><span class="p">(</span><span class="n">matrices</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pad a list of binary surmise relation matrices to the same size by adding zeros.</span>
+<span class="sd">    The result is a 3D array of shape (M, M, N) where M is the maximum number of items in the domain and N is the number of input matrices</span>
+<span class="sd">    (E.g. [[1,2],[3,4]] -&gt; [[1,2,0,0], [3,4,0,0], [0,0,0,0], [0,0,0,0]] for M=4).</span>
+<span class="sd">    </span>
+<span class="sd">    :param matrices: list of binary surmise relation matrices or list of sets of tuples for the relation.</span>
+<span class="sd">    :type matrices: list[np.ndarray] or  list[list[tuple[int, int]]]</span>
+<span class="sd">    </span>
+<span class="sd">    :return: 3D array of padded binary surmise relation matrices.</span>
+<span class="sd">    :rtype: np.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># convert relation from set notation to matrix notation, if necessary</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">matrices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">matrices</span> <span class="o">=</span> <span class="p">[</span><span class="n">S_to_matrix</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span> <span class="k">for</span> <span class="n">matrix</span> <span class="ow">in</span> <span class="n">matrices</span><span class="p">]</span>
+    <span class="c1"># determine maximum number of items</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span> <span class="k">for</span> <span class="n">matrix</span> <span class="ow">in</span> <span class="n">matrices</span><span class="p">)</span>
+    
+    <span class="c1"># Initialize 3D array for resulting matrices</span>
+    <span class="n">padded3D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">matrices</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">matrix</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">matrices</span><span class="p">):</span>
+        <span class="n">padded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">M</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">matrix</span><span class="p">):</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">M</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">])),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)))</span> <span class="c1"># Pad row with zeros</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">M</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>  <span class="c1"># Pad columns with zeros</span>
+            <span class="n">padded</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span>
+        <span class="n">padded3D</span><span class="p">[:,:,</span><span class="n">num</span><span class="p">]</span> <span class="o">=</span> <span class="n">padded</span>
+
+    <span class="k">return</span> <span class="n">padded3D</span></div>
+
+
+<div class="viewcode-block" id="pad_sequences">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.DKST_utils.pad_sequences">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pad_sequences</span><span class="p">(</span><span class="n">sequences</span><span class="p">,</span> <span class="n">pad_token</span><span class="o">=</span><span class="s2">&quot;&lt;pad&gt;&quot;</span><span class="p">,</span> <span class="n">eos_token</span><span class="o">=</span><span class="s2">&quot;&lt;eos&gt;&quot;</span><span class="p">,</span> <span class="n">vocab_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pads a list of sequences of knowledge states (in alphabetic notation) to the maximum number of states in the respective domain.</span>
+<span class="sd">    Also adds an &lt;eos&gt; token and ensures the empty state is included.</span>
+<span class="sd">    The result is a 2D array of shape (N, K) where N is the number of input sequences (ordered) and K is the maximum sequence length (n states +1).</span>
+<span class="sd">    (E.g. [&quot;c&quot;,&quot;bc&quot;,&quot;abc&quot;] -&gt; [&quot;&quot;, &quot;c&quot;,&quot;bc&quot;,&quot;abc&quot;,&quot;&lt;eos&gt;&quot;&quot;&lt;pad&gt;&quot;,&quot;&lt;pad&gt;&quot;,&quot;&lt;pad&gt;&quot;,&quot;&lt;pad&gt;&quot;,&quot;&lt;pad&gt;&quot;,&quot;&lt;pad&gt;&quot;]  for M=3).</span>
+<span class="sd">    </span>
+<span class="sd">    Note: All items need to be included in the sequneces if vocab_size is None.</span>
+<span class="sd">    </span>
+<span class="sd">    :param sequences: List of sequences of knowledge states.</span>
+<span class="sd">    :type sequences: list[list[str]] or array-like</span>
+<span class="sd">    :param pad_token: Token to represent padding.</span>
+<span class="sd">    :type pad_token: str</span>
+<span class="sd">    :param vocab_size: Number of unique states in the domain.</span>
+<span class="sd">    :type vocab_size: int</span>
+<span class="sd">    </span>
+<span class="sd">    :return: 2D array of padded sequences.</span>
+<span class="sd">    :rtype: np.ndarray[str]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Ensure sequences is a list of lists, not a NumPy array</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sequences</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">sequences</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="k">for</span> <span class="n">seq</span> <span class="ow">in</span> <span class="n">sequences</span><span class="p">]</span>
+
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">string</span> <span class="k">for</span> <span class="n">lst</span> <span class="ow">in</span> <span class="n">sequences</span> <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">lst</span> <span class="k">if</span> <span class="s2">&quot;&lt;&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">string</span><span class="p">])))</span> <span class="c1"># Maximum number of items</span>
+    
+    <span class="k">if</span> <span class="n">vocab_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+        <span class="n">vocab_size</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">2</span> <span class="c1"># Add 2 for &lt;eos&gt; and &lt;pad&gt; tokens</span>
+    
+    <span class="c1"># Add empty state to each sequence if not included</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">seq</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sequences</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">:</span> 
+            <span class="n">sequences</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">seq</span>
+
+    <span class="c1"># Allocate array prefilled with padding tokens </span>
+    <span class="n">padded_sequences</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">sequences</span><span class="p">),</span> <span class="n">vocab_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">pad_token</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;&lt;U</span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="n">m</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="c1"># set max length of the strings to m, but at least 5 for &lt;eos&gt; and &lt;pad&gt;  </span>
+
+    <span class="c1"># Fill in each sequence and add the &lt;eos&gt; token</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">seq</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sequences</span><span class="p">):</span>
+        <span class="n">padded_sequences</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)]</span> <span class="o">=</span> <span class="n">seq</span>  <span class="c1"># Fill in the original </span>
+        <span class="k">if</span> <span class="n">seq</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">eos_token</span><span class="p">:</span>
+            <span class="n">padded_sequences</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)]</span> <span class="o">=</span> <span class="n">eos_token</span>  <span class="c1"># Add the &lt;eos&gt; token</span>
+
+    <span class="k">return</span> <span class="n">padded_sequences</span></div>
+
+
+<div class="viewcode-block" id="pad_K">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.DKST_utils.pad_K">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pad_K</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pad a binary knowledge structure in matrix notation to uniform length 2**2**\\|Q\\| by adding zero-states.</span>
+<span class="sd">    </span>
+<span class="sd">    :param matrix: Binary knowledge structure in matrix notation \\|K\\| x \\|Q\\|.</span>
+<span class="sd">    :type matrix: np.ndarray or list[list[int]]</span>
+<span class="sd">    :param m: Domain size for padding, automatically inferred from the given knowledge structure at default.</span>
+<span class="sd">    :type m: int</span>
+<span class="sd">    :return: Padded binary knowledge structure in matrix notation 2**\\|Q\\| x \\|Q\\|.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># check input </span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be a binary matrix of type int.&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Number of items</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">m</span>  <span class="c1"># Number of possible states</span>
+    
+    <span class="c1"># Pads the first dimension (rows) with 0 elements in the front and n - |K| elements ; (0, n - matrix.shape[0]).</span>
+    <span class="c1"># The second dimension (columns) is unchanged; (0, 0).</span>
+    <span class="n">padded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">padded</span></div>
+
+
+<div class="viewcode-block" id="trim_K">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.DKST_utils.trim_K">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">trim_K</span><span class="p">(</span><span class="n">matrix</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Removes trailing zero rows from a binary knowledge structure in matrix notation.</span>
+<span class="sd">    </span>
+<span class="sd">    :param matrix: Padded knowledge structure in matrix notation.</span>
+<span class="sd">    :type matrix: np.ndarray </span>
+<span class="sd">    :return: Trimmed binary knowledge structure in matrix notation.</span>
+<span class="sd">    :rtype: np.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check input</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be a binary matrix of type int.&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Find the last row with any non-zero elements</span>
+    <span class="n">last_nonzero_row</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">matrix</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="c1"># Slice the array up to and including the last non-zero row</span>
+    <span class="k">return</span> <span class="n">matrix</span><span class="p">[:</span><span class="n">last_nonzero_row</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span></div>
+
+
+<span class="c1"># data aggregation </span>
+<div class="viewcode-block" id="calculate_counts">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.DKST_utils.calculate_counts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_counts</span><span class="p">(</span><span class="n">response_patterns</span><span class="p">,</span> <span class="n">state2idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">standadize</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the counts of all response patterns/ knowledge states in matrix notation.</span>
+<span class="sd">    Can be used to aggregate observed response data by frequency as input to an ANN.</span>
+
+<span class="sd">    :param response_patterns: List of response patterns represented as binary vectors</span>
+<span class="sd">    :type response_patterns: list[np.ndarray[int]] or array-like or list[str] </span>
+<span class="sd">    :param state2idx: Dictionary mapping states to indices, created if not provided</span>
+<span class="sd">    :type state2idx: dict[str, int]</span>
+<span class="sd">    :param standadize: Whether to standardize the counts, defaults to False</span>
+<span class="sd">    :type standadize: bool, optional</span>
+<span class="sd">    </span>
+<span class="sd">    :return: Array of counts (2 ** num_items) associated to all possible response patterns in conventional order</span>
+<span class="sd">    :rtype: np.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response_patterns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span> 
+        <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">response_patterns</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># Number of items</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">string</span> <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">response_patterns</span> <span class="k">if</span> <span class="s2">&quot;&lt;&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">string</span><span class="p">])))</span>  <span class="c1"># Number of items</span>
+    
+    <span class="c1"># Generate state2idx given m, if not provided</span>
+    <span class="k">if</span> <span class="n">state2idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">state2idx</span> <span class="o">=</span> <span class="n">create_state2idx</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="c1"># Initialize counts array</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">m</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>  
+    
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response_patterns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span> 
+        <span class="n">response_patterns_alphabetic</span> <span class="o">=</span> <span class="n">matrix_to_K</span><span class="p">(</span><span class="n">response_patterns</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">response_patterns_alphabetic</span> <span class="o">=</span> <span class="n">response_patterns</span>
+    
+    <span class="c1"># Count the occurrences of each pattern</span>
+    <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">response_patterns_alphabetic</span><span class="p">:</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">state2idx</span><span class="p">[</span><span class="n">pattern</span><span class="p">]</span>
+        <span class="n">counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span> <span class="c1"># Increment the count for this index</span>
+    
+    <span class="k">if</span> <span class="n">standadize</span><span class="p">:</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="p">(</span><span class="n">counts</span> <span class="o">-</span> <span class="n">counts</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">counts</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">counts</span></div>
+
+
+<span class="c1"># pytorch datasets</span>
+<div class="viewcode-block" id="check_config">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.DKST_utils.check_config">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_config</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if a DKST dataset configuration is valid.</span>
+<span class="sd">    </span>
+<span class="sd">    :param config: Dataset configuration with all necessary parameters</span>
+<span class="sd">    :type config: dict</span>
+<span class="sd">    :return: Whether the configuration is valid</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">required_keys</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;ID&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;d_type&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;device&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)),</span>
+        <span class="s2">&quot;antisymmetric&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="s2">&quot;m&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;n_structures&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;n_patterns&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;no_dublicates&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="s2">&quot;EOS_TOKEN&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;PAD_TOKEN&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;standadized&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="s2">&quot;beta&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span>
+        <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span>
+        <span class="s2">&quot;factor&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+    <span class="p">}</span>
+    
+    <span class="c1"># Check for missing keys</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">expected_type</span> <span class="ow">in</span> <span class="n">required_keys</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing key: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">expected_type</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Incorrect type for key: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">. Expected </span><span class="si">{</span><span class="n">expected_type</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="n">key</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    
+    <span class="c1"># Check specific value constraints</span>
+    <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;device&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="s2">&quot;mps&quot;</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Invalid device. Must be &#39;cpu&#39;, &#39;cuda&#39; or &#39;mps&#39;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">],</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameters &#39;beta&#39; must be int or float&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">]):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All elements in &#39;beta&#39; must be int or float&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">],</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameters &#39;eta&#39; must be int or float&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">]):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All elements in &#39;eta&#39; must be int or float&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jakob Lederer.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

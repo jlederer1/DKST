@@ -46,7 +46,11 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="dkst.html">dkst package</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="dkst.utils.html">dkst.utils</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">dkst.dkst_datasets</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">dkst.dkst_datasets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.dkst_datasets.DKSTDataset02"><code class="docutils literal notranslate"><span class="pre">DKSTDataset02</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.dkst_datasets.collate_fn"><code class="docutils literal notranslate"><span class="pre">collate_fn()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="dkst.models.html">dkst.models</a></li>
 </ul>
 </li>
@@ -77,8 +81,54 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="dkst-dkst-datasets">
-<h1>dkst.dkst_datasets<a class="headerlink" href="#dkst-dkst-datasets" title="Link to this heading"></a></h1>
+  <section id="module-dkst.dkst_datasets">
+<span id="dkst-dkst-datasets"></span><h1>dkst.dkst_datasets<a class="headerlink" href="#module-dkst.dkst_datasets" title="Link to this heading"></a></h1>
+<p>DKST_datasets.py</p>
+<p>This module provides different types of DKST datasets.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dkst.dkst_datasets.DKSTDataset02">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dkst.dkst_datasets.</span></span><span class="sig-name descname"><span class="pre">DKSTDataset02</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/dkst_datasets.html#DKSTDataset02"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.dkst_datasets.DKSTDataset02" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
+<p>A simple dataset of knowledge structures, conditional probabilities and responses data aggregates for training K-net.
+Loads or samples knowledge structures and response data according to given dataset configuration file.
+Retrieves a quadruple of 1D tensors, each of length 2^m, where m is the domain size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_path</strong> (<em>str</em>) – Path to the dataset configuration file.</p></li>
+<li><p><strong>baseset_path</strong> (<em>str</em>) – Path to the baseset file (optional).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dataset of knowledge structures and response aggregates.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Custom torch.utils.data.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.dkst_datasets.collate_fn">
+<span class="sig-prename descclassname"><span class="pre">dkst.dkst_datasets.</span></span><span class="sig-name descname"><span class="pre">collate_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/dkst_datasets.html#collate_fn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.dkst_datasets.collate_fn" title="Link to this definition"></a></dt>
+<dd><p>Collate function for DataLoader.
+Does not change the data location device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> (<em>list</em><em> of </em><em>tensor tuples</em>) – A batch of data.</p></li>
+<li><p><strong>device</strong> (<em>str</em>) – Device to move tensors to (optional).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A batch of data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 

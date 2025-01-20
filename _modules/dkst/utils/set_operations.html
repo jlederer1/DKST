@@ -1,0 +1,453 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dkst.utils.set_operations &mdash; dkst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            dkst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../dkst.html">dkst package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">dkst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dkst.utils.set_operations</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dkst.utils.set_operations</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">set_operations.py</span>
+
+<span class="sd">This module provides functions to determine if a given set of string subsets is union-closed and intersection-closed,</span>
+<span class="sd">and to compute the union closure and intersection closure of a set of string subsets.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">#######################</span>
+<span class="c1"># To do: </span>
+<span class="c1"># - change sorting scheme in find_union_closed_base, intersection_closure, union_closure</span>
+<span class="c1"># - check consistency of n and m in find_union_closed_base and dkst package</span>
+<span class="c1"># - Make sure sorting is consistent for structures and relations and both in set and matrix representation; sort_alphabetic()</span>
+<span class="c1"># - use np concistently, powerset()</span>
+<span class="c1">#######################</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">combinations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<div class="viewcode-block" id="powerset">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.set_operations.powerset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">powerset</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate the powerset of a given domain size m in alphabetical set notation.</span>
+<span class="sd">    </span>
+<span class="sd">    :param m: The domain size.</span>
+<span class="sd">    :type m: int</span>
+<span class="sd">    :return: The powerset of the domain as ordered list of strings.</span>
+<span class="sd">    :rtype: list[str]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">domain</span> <span class="o">=</span> <span class="p">[</span><span class="nb">chr</span><span class="p">(</span><span class="mi">97</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)]</span>
+    <span class="n">powerset</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">m</span><span class="p">):</span>  <span class="c1"># Equivalent to 2^n</span>
+        <span class="n">subset</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="c1"># Check if the j-th element is in the i-th subset</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">j</span><span class="p">):</span>
+                <span class="n">subset</span> <span class="o">+=</span> <span class="n">domain</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="n">powerset</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
+    <span class="n">powerset</span> <span class="o">=</span> <span class="n">sort_K</span><span class="p">(</span><span class="n">powerset</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">powerset</span> </div>
+
+
+<div class="viewcode-block" id="powerset_binary">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.set_operations.powerset_binary">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">powerset_binary</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate the list of all possible combinations of 0s and 1s of length m.</span>
+<span class="sd">    </span>
+<span class="sd">    :param m: Length of the binary vectors</span>
+<span class="sd">    :type m: int</span>
+<span class="sd">    :return: List of binary vectors</span>
+<span class="sd">    :rtype: np.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">powerset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;b&#39;</span><span class="p">)])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">m</span><span class="p">)])</span>
+    <span class="n">powerset</span> <span class="o">=</span> <span class="n">sort_K_binary</span><span class="p">(</span><span class="n">powerset</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">powerset</span></div>
+
+
+
+<div class="viewcode-block" id="is_union_closed">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.set_operations.is_union_closed">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_union_closed</span><span class="p">(</span><span class="n">sets</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the given set is union-closed. The set can be either a list of string subsets</span>
+<span class="sd">    or a binary matrix (numpy array) where rows represent knowledge states and columns represent items.</span>
+
+<span class="sd">    A set is union-closed if the union of any two subsets (or knowledge states) results in a subset</span>
+<span class="sd">    (or knowledge state) that is also in the set.</span>
+
+<span class="sd">    :param sets: A list of subsets represented as strings, or a binary matrix (numpy array).</span>
+<span class="sd">    :type sets: list[str] or numpy.ndarray</span>
+<span class="sd">    :return: True if the set is union-closed, False otherwise.</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check if the input is a list of strings</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sets</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sets</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">set1</span> <span class="ow">in</span> <span class="n">sets</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">set2</span> <span class="ow">in</span> <span class="n">sets</span><span class="p">:</span>
+                <span class="n">union_set</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">set1</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">set2</span><span class="p">)))</span>
+                <span class="k">if</span> <span class="n">union_set</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sets</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="c1"># Check if the input is a numpy array (binary matrix)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sets</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">num_rows</span><span class="p">,</span> <span class="n">num_columns</span> <span class="o">=</span> <span class="n">sets</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rows</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">num_rows</span><span class="p">):</span>
+                <span class="n">union_row</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bitwise_or</span><span class="p">(</span><span class="n">sets</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">sets</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">union_row</span><span class="p">,</span> <span class="n">sets</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rows</span><span class="p">)):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported input type. Input must be a list of strings or a numpy array.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_intersection_closed">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.set_operations.is_intersection_closed">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_intersection_closed</span><span class="p">(</span><span class="n">sets</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the given set of string subsets is intersection-closed.</span>
+
+<span class="sd">    A set of string subsets is intersection-closed if the intersection of characters from any two subsets within the set,</span>
+<span class="sd">    when sorted, is also a subset within the set.</span>
+
+<span class="sd">    :param sets: A list of subsets represented as strings.</span>
+<span class="sd">    :type sets: list[str]</span>
+<span class="sd">    :return: True if the set of subsets is intersection-closed, False otherwise.</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">set1</span> <span class="ow">in</span> <span class="n">sets</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">set2</span> <span class="ow">in</span> <span class="n">sets</span><span class="p">:</span>
+            <span class="n">intersection_set</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">set1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">set2</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="n">intersection_set</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sets</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="union_closure">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.set_operations.union_closure">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">union_closure</span><span class="p">(</span><span class="n">sets</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the union closure of a given set of string subsets.</span>
+
+<span class="sd">    The union closure of a set is the smallest union-closed set containing all original subsets.</span>
+
+<span class="sd">    :param sets: A list of subsets represented as strings.</span>
+<span class="sd">    :type sets: list[str]</span>
+<span class="sd">    :return: The union-closed set containing all possible unions of subsets.</span>
+<span class="sd">    :rtype: list[str]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">closure</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sets</span><span class="p">)</span>
+    <span class="n">added</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">while</span> <span class="n">added</span><span class="p">:</span>
+        <span class="n">added</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">new_elements</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">set1</span> <span class="ow">in</span> <span class="n">closure</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">set2</span> <span class="ow">in</span> <span class="n">closure</span><span class="p">:</span>
+                <span class="n">union_set</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">set1</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">set2</span><span class="p">)))</span>
+                <span class="k">if</span> <span class="n">union_set</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">closure</span><span class="p">:</span>
+                    <span class="n">new_elements</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">union_set</span><span class="p">)</span>
+                    <span class="n">added</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="n">closure</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new_elements</span><span class="p">)</span>
+    
+    <span class="n">sorted_K</span> <span class="o">=</span> <span class="n">sort_K</span><span class="p">(</span><span class="n">closure</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sorted_K</span> <span class="o">==</span> <span class="p">[]</span> <span class="ow">or</span> <span class="n">sorted_K</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">sorted_K</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>   <span class="c1"># the closure of any family of sets always includes the empty set </span>
+    
+    <span class="k">return</span> <span class="n">sorted_K</span></div>
+
+
+<div class="viewcode-block" id="intersection_closure">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.set_operations.intersection_closure">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">intersection_closure</span><span class="p">(</span><span class="n">sets</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the intersection closure of a given set of string subsets.</span>
+
+<span class="sd">    The intersection closure of a set is the smallest intersection-closed set containing all original subsets.</span>
+
+<span class="sd">    :param sets: A list of subsets represented as strings.</span>
+<span class="sd">    :type sets: list[str]</span>
+<span class="sd">    :return: The intersection-closed set containing all possible intersections of subsets.</span>
+<span class="sd">    :rtype: list[str]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sets</span><span class="p">:</span>  <span class="c1"># If the input is empty, return an empty list</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="n">closure</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sets</span><span class="p">)</span>
+    <span class="n">added</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">while</span> <span class="n">added</span><span class="p">:</span>
+        <span class="n">added</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">new_elements</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">set1</span> <span class="ow">in</span> <span class="n">closure</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">set2</span> <span class="ow">in</span> <span class="n">closure</span><span class="p">:</span>
+                <span class="n">intersection_set</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">set1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">set2</span><span class="p">)))</span>
+                <span class="k">if</span> <span class="n">intersection_set</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">closure</span><span class="p">:</span>
+                    <span class="n">new_elements</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">intersection_set</span><span class="p">)</span>
+                    <span class="n">added</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="n">closure</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new_elements</span><span class="p">)</span>
+    
+    <span class="n">sorted_K</span> <span class="o">=</span> <span class="n">sort_K</span><span class="p">(</span><span class="n">closure</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sorted_K</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">sorted_K</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>   <span class="c1"># the closure of any family of sets always includes the empty set </span>
+
+    <span class="k">return</span> <span class="n">sorted_K</span></div>
+
+
+<div class="viewcode-block" id="union_base">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.set_operations.union_base">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">union_base</span><span class="p">(</span><span class="n">sets</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the base of a knowledge space using the Dowling 1993 algorithm, see also Falmagne &amp; Doignon 2011. </span>
+<span class="sd">    It automatically infers the domain from the input sets, if not specified.</span>
+
+<span class="sd">    :param sets: A list of subsets representing states in the knowledge space.</span>
+<span class="sd">    :type sets: list[str]</span>
+<span class="sd">    :return: A list of subsets representing the base of the knowledge space.</span>
+<span class="sd">    :rtype: list[str]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check if the input set is union-closed</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_union_closed</span><span class="p">(</span><span class="n">sets</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The input set is not union-closed, so it doesn&#39;t have a base.&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Infer the domain Q by taking the union of all items in all sets</span>
+    <span class="k">if</span> <span class="n">domain</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">domain</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">()</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="o">*</span><span class="n">sets</span><span class="p">))</span>
+
+    <span class="c1"># Initialize the array T</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sets</span><span class="p">)</span>                                                                          <span class="c1">### TO DO: check consistency throughout dkst package...</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>                                                                        <span class="c1">### This version of n and m is used in Falkmane &amp; Doignon 2011..</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;*&#39;</span> <span class="k">if</span> <span class="n">domain</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="ow">in</span> <span class="n">sets</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">else</span> <span class="s1">&#39;-&#39;</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+
+    <span class="c1"># Process the array to mark with &#39;+&#39; where an item aready occured in a previous state </span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">T</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span> <span class="ow">and</span> <span class="nb">set</span><span class="p">(</span><span class="n">sets</span><span class="p">[</span><span class="n">p</span><span class="p">])</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">sets</span><span class="p">[</span><span class="n">i</span><span class="p">])):</span>
+                        <span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span>
+                        <span class="k">break</span>
+
+    <span class="c1"># Extract the base (atoms)</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="p">[</span><span class="n">sets</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">if</span> <span class="s1">&#39;*&#39;</span> <span class="ow">in</span> <span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+    
+    <span class="k">if</span> <span class="n">base</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span> <span class="c1"># bases dont include the empty set</span>
+        <span class="n">base</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">base</span>   <span class="c1"># to do: always sort the base? </span></div>
+
+
+
+<div class="viewcode-block" id="sort_K">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.set_operations.sort_K">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sort_K</span><span class="p">(</span><span class="n">sets</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sorts a given set or list of strings by length and alphabetically and returns the sorted knowledge structure as list.</span>
+<span class="sd">    Induces the same order as sort_K_binary() for the corresponding knowledge structure in binary matrix notation.</span>
+<span class="sd">    </span>
+<span class="sd">    :param sets: A list of strings representing knowledge states.</span>
+<span class="sd">    :type sets: list[str]</span>
+<span class="sd">    :return: A sorted list of strings representing knowledge states.</span>
+<span class="sd">    :rtype: list[str]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># check for knowledge structure vs quasiorder</span>
+    <span class="c1"># to do #</span>
+    
+    <span class="c1"># sorts list of strings a) by length b) alphabetically like &quot;&quot;&lt;&quot;a&quot;&lt;&quot;b&quot;&lt;&quot;c&quot;&lt;&quot;ab&quot;&lt;&quot;ac&quot;&lt;&quot;bc&quot;&lt;&quot;abc&quot;&lt;&quot;&lt;pad&gt;&quot;</span>
+    <span class="n">sorted_states</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">sets</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">x</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">sorted_states</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">sort_K_binary</span><span class="p">(</span><span class="n">matrix</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sorts a given binary matrix by the sum of the elements in each row and the integer value represented by a row in binary code.</span>
+<span class="sd">    Induces the same order as sort_K() for the corresponding knowledge structure in set notation.</span>
+<span class="sd">    </span>
+<span class="sd">    :param matrix: A binary matrix (numpy array).</span>
+<span class="sd">    :type matrix: numpy.ndarray</span>
+<span class="sd">    :return: A row-wise sorted binary matrix.</span>
+<span class="sd">    :rtype: numpy.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected a numpy array, but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span><span class="si">}</span><span class="s2"> instead!&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Function to convert binary list to integer</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">binary_to_int</span><span class="p">(</span><span class="n">binary_list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">binary_list</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Sort the array based on two criteria:</span>
+    <span class="c1"># 1. The sum of the elements in the sublist.</span>
+    <span class="c1"># 2. The integer value represented by the binary number in the sublist.</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">sublist</span><span class="p">:</span> <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">sublist</span><span class="p">),</span> <span class="o">-</span><span class="n">binary_to_int</span><span class="p">(</span><span class="n">sublist</span><span class="p">))))</span>
+
+<div class="viewcode-block" id="sort_K_binary">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.set_operations.sort_K_binary">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sort_K_binary</span><span class="p">(</span><span class="n">matrix</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sorts a given binary matrix by the sum of the elements in each row and the integer value represented by a row in binary code.</span>
+<span class="sd">    Induces the same order as sort_K() for the corresponding knowledge structure in set notation.</span>
+<span class="sd">    </span>
+<span class="sd">    :param matrix: A binary matrix (numpy array).</span>
+<span class="sd">    :type matrix: numpy.ndarray</span>
+<span class="sd">    :return: A row-wise sorted binary matrix.</span>
+<span class="sd">    :rtype: numpy.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected a numpy array, but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span><span class="si">}</span><span class="s2"> instead!&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Calculate row sums and binary values for sorting</span>
+    <span class="n">row_sums</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">binary_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># Use np.lexsort to sort by row sums (ascending) and binary values (descending)</span>
+    <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">lexsort</span><span class="p">((</span><span class="o">-</span><span class="n">binary_values</span><span class="p">,</span> <span class="n">row_sums</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">matrix</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="K_to_matrix">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.set_operations.K_to_matrix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">K_to_matrix</span><span class="p">(</span><span class="n">sets</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a knowledge structure K from alphabetic set notation into a binary matrix.</span>
+<span class="sd">    Can be used for only the base of a knowledge structure or for the entire knowledge structure.</span>
+
+<span class="sd">    :param sets: A knowledge structure (sorted).</span>
+<span class="sd">    :type sets: list[str]</span>
+<span class="sd">    :return: The binary matrix representation of the knowledge structure (sorted).</span>
+<span class="sd">    :rtype: np.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sets</span><span class="p">)))</span>
+    
+    <span class="c1"># Create a binary matrix</span>
+    <span class="n">matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">sets</span><span class="p">),</span> <span class="n">m</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="c1"># Fill the matrix with the binary representation of the knowledge states</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="nb">ord</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="c1"># ASCII value of &#39;a&#39; is 97</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">state</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sets</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
+            <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="nb">ord</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">-</span> <span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">matrix</span></div>
+
+
+<div class="viewcode-block" id="matrix_to_K">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.set_operations.matrix_to_K">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">matrix_to_K</span><span class="p">(</span><span class="n">matrix</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a binary matrix into a knowledge structure K in alphabetic set notation.</span>
+<span class="sd">    Can be used for only the base of a knowledge structure or for the entire knowledge structure.</span>
+<span class="sd">    Respects the order of given knowledge states.</span>
+
+<span class="sd">    :param matrix: A binary matrix (numpy array), possibly padded with trailing zero rows.</span>
+<span class="sd">    :type matrix: np.ndarray</span>
+<span class="sd">    :return: The knowledge structure representation of the matrix.</span>
+<span class="sd">    :rtype: list[str]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Convert the binary matrix to a list of strings</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="c1"># ASCII value of &#39;a&#39; is 97</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+    <span class="k">return</span> <span class="n">K</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jakob Lederer.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
