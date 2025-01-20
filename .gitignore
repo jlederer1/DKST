@@ -1,0 +1,16 @@
+# standard Python ignores
+__pycache__/
+*.pyc
+*.pyo
+.vscode/
+.DS_Store
+dkst-env/
+*.egg-info/
+
+# ignore data files
+#data/
+docs/build/
+examples/
+.pytest_cache/
+setup.py 
+update_readme_version.py

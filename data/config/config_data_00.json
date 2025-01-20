@@ -1,0 +1,20 @@
+{
+    "ID" : "DKST_data_v0.1.0",
+    
+    "d_type" : "float32",
+    "device" : "cpu",
+    "seed": null,
+    
+    "antisymmetric": false,
+    "m": 5,
+    "n": 500,
+    "no_dublicates": false,
+    
+    "EOS_TOKEN" : "<eos>",
+    "PAD_TOKEN" : "<pad>",
+    "standadized" : true,
+    
+    "beta" : [0.15],
+    "eta" : [0.15],
+    "factor": 0.05
+}

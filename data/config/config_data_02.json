@@ -1,0 +1,24 @@
+{
+    "ID" : "DKST_data_v0.1.0",
+    "d_type" : "float32",
+    "device" : "cpu",
+    "seed": null,
+    
+    "antisymmetric": false,
+    "m": 7,
+    "n_structures": 1000,
+    "n_patterns": 500,
+    "no_dublicates": false,
+    "EOS_TOKEN" : "<eos>",
+    "PAD_TOKEN" : "<pad>",
+    "standadized" : true,
+    "beta" : 0.15,
+    "eta" : 0.15,
+    "factor": null,
+
+    "hidden_dim": 1024,
+    "n_heads": 2, 
+    "n_layers": 1,
+    "dropout": 0.3,
+    "activation": "relu"
+}
