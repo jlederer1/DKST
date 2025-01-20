@@ -2,7 +2,7 @@
 
 ## Project structure 
 This package follows PyPI guidelines for structure, metadata, and documentation.
-It uses Sphinx for automatic documentation generation from docstrings.
+It uses Sphinx for automatic documentation generation from docstrings and semantic versioning.
 
 ```
 project-root/
@@ -162,6 +162,5 @@ To build the documentation, follow these steps:
     ```
 
 The generated documentation can be accessed via `docs/build/html/index.html`.
-Add your content using ``reStructuredText`` syntax to the .rst files. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
+Add your content using `reStructuredText` syntax to the .rst files. See the
+[reStructuredText documentation](https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html) for details.
