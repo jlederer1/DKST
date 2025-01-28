@@ -2,8 +2,8 @@
 The documentation for this project is available at: [DKST Documentation](https://jlederer1.github.io/DKST/)
 
 ## Project structure 
-This package follows PyPI guidelines for structure, metadata, and documentation.
-It uses Sphinx for automatic documentation generation from docstrings and semantic versioning.
+This package follows PyPI guidelines for structure, metadata, and documentation and adheres to semantic versioning.
+It uses Sphinx for automatic documentation generation from docstrings, hosted via GitHub Pages.
 
 ```
 project-root/
@@ -41,7 +41,8 @@ project-root/
 │   ├── test_dkst_utils.py      # Tests for DKST utilities
 │   ├── test_kst_utils.py       # Tests for KST utilities
 │   ├── test_relations.py       # Tests for relations module
-│   └── test_set_operations.py  # Tests for set operations module
+│   ├── test_set_operations.py  # Tests for set operations module
+│   └── __init__.py         # (Package initializer for relative paths)
 ├── .gitignore              # Git ignore file
 ├── README.md               # Project README
 ├── requirements.txt        # Project dependencies
@@ -50,9 +51,9 @@ project-root/
 ```
 
 ## Installation and Setup
-To install the required dependencies, follow these steps:
+To install the required dependencies, clone the repository and follow these steps:
 
-1. Ensure you have Python 3 and pip installed:
+1. Ensure you have Python 3 and pip installed (I recommend Python 3.9.13 for this project):
     ```sh
     python3 --version
     pip3 --version
@@ -80,7 +81,7 @@ To install the required dependencies, follow these steps:
     - For systems with CUDA support, check your CUDA version and install the CUDA-enabled version of PyTorch:
         ```sh
         nvcc --version
-        pip3 install torch==2.1.1+cu118 --find-links https://download.pytorch.org/whl/torch_stable.html
+        pip install torch==2.1.1+cu118 --find-links https://download.pytorch.org/whl/torch_stable.html --no-cache-dirs
         ```
     - For macOS or systems without CUDA support, install the CPU-only version of PyTorch:
         ```sh

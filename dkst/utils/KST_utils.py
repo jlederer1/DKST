@@ -30,6 +30,7 @@ from dkst.utils.set_operations import K_to_matrix
 import numpy as np
 from tqdm import tqdm
 from matplotlib import pyplot as plt
+import scipy.special
 
 
 # Combinatorics (see Online Encyclopedia of Integer Sequences, https://oeis.org/ with ids in brackets) 
@@ -446,7 +447,8 @@ def sample_knowledge_structures(m, num_samples, no_dublicates=False):
     # Sample cardinalities representatively
     counts = [0, 0, 1]  # for every domain size m, there is only one structure with 2 states only
     for k in range(1, 2**m - 1): # there is a maximum of 2**m states 
-        count = math.comb(2**m - 2, k) # number of possible knowledge structures for m items and k states = (2^m - 2 choose k)
+        #count = math.comb(2**m - 2, k) # depriceded in python 3.7 ror so...
+        count = scipy.special.comb(2**m - 2, k, exact=True) # number of possible knowledge structures for m items and k states = (2^m - 2 choose k)
         counts.append(count)
     
     total = sum(counts)

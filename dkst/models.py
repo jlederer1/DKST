@@ -17,6 +17,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 from tqdm import tqdm
+from pathlib import Path
 
 
 class PositionalEncoding(nn.Module):
@@ -60,7 +61,7 @@ class CustomTransformerDecoderLayer(nn.TransformerDecoderLayer):
     """
     def __init__(self, d_model, nhead, dim_feedforward=2048, dropout=0.1,
                  activation="relu", layer_norm_eps=1e-5, batch_first=False,
-                 norm_first=False, bias=True):
+                 norm_first=False, bias=True, device="mps", dtype=torch.float32):
         """
         Constructor for the CustomTransformerDecoderLayer.
 
@@ -83,8 +84,9 @@ class CustomTransformerDecoderLayer(nn.TransformerDecoderLayer):
         :param bias: Model bias.
         :type bias: bool
         """
+        factory_kwargs = {'device': device, 'dtype': dtype} 
         super().__init__(d_model, nhead, dim_feedforward, dropout, activation,
-                         layer_norm_eps, batch_first, norm_first, bias)
+                         layer_norm_eps, batch_first, norm_first, bias, **factory_kwargs)
         
         self.d_model = d_model
         self.nhead = nhead
@@ -95,8 +97,8 @@ class CustomTransformerDecoderLayer(nn.TransformerDecoderLayer):
         self.norm_first = norm_first
         
         self.dropout = nn.Dropout(self.dropout_value)
-        self.self_attn = nn.MultiheadAttention(d_model, nhead, dropout=dropout, bias=bias)
-        self.multihead_attn = nn.MultiheadAttention(d_model, nhead, dropout=dropout, bias=bias)
+        self.self_attn = nn.MultiheadAttention(d_model, nhead, dropout=dropout, bias=bias, device=device, dtype=dtype)
+        self.multihead_attn = nn.MultiheadAttention(d_model, nhead, dropout=dropout, bias=bias, device=device, dtype=dtype)
 
     def forward(self, tgt: Tensor, memory: Tensor,
                 tgt_mask: Optional[Tensor] = None, memory_mask: Optional[Tensor] = None,
@@ -208,7 +210,7 @@ class CustomDecoderModel(nn.Module):
         :param config_path: Path to the configuration file.
         :type config_path: str
         """
-        super(CustomDecoderModel, self).__init__()
+        super().__init__()
         
         if not os.path.exists(config_path):
             raise FileNotFoundError(f"Config file not found at {config_path}.")
@@ -581,16 +583,22 @@ def eval(model, eval_loader, ce_loss, ln_loss, ln_wheight, penalty_weight=0, kne
             # Custom Cross-entropy loss (weighted)
             loss_ce = ce_loss(output, target_seq) * (1 - ln_wheight) / batch_size 
             total_loss_CE += loss_ce
+
             # Custom Length-Norm-Loss (wheighted)
             loss_ln = ln_loss(embedding, target_seq, model.vocab_size) * ln_wheight / batch_size
             total_loss_LN += loss_ln 
+
             # Penalty loss for dublicates in the output sequence
-            with torch.no_grad():
-                _, predicted_tokens = torch.max(output, dim=-1)  # Get token predictions
+            _, predicted_tokens = torch.max(output, dim=-1)  # Get token predictions
             non_padding_tokens = predicted_tokens[(predicted_tokens != model.vocab_size - 1) & (predicted_tokens != model.vocab_size - 2)]
-            unique_counts = torch.stack([(predicted_tokens == token).sum(dim=1) for token in non_padding_tokens.unique()])
-            repeat_loss = penalty_weight * unique_counts.sum(dim=0).float().mean() / batch_size  # Cast to float
+            unique_tokens = non_padding_tokens.unique() # Check if non_padding_tokens is not empty before stacking
+            if unique_tokens.numel() > 0:
+                unique_counts = torch.stack([(predicted_tokens == token).sum(dim=1) for token in unique_tokens])
+                repeat_loss = penalty_weight * unique_counts.sum(dim=0).float().mean() / batch_size  # Cast to float
+            else:
+                repeat_loss = torch.tensor(0.0, device=device)
             total_loss_penalty += repeat_loss
+
             # Total loss
             loss_combined = loss_ce + loss_ln + repeat_loss
             total_loss_combined += loss_combined
@@ -806,21 +814,74 @@ def performance(model, dataloader, regressor=None, num_samples=100, n_mc_samples
 
     return acc, avr_sym_diff, std_sym_diff
 
-def save_model(model, optimizer, epoch, path):
+def save_model(model, file_name='model_checkpoint.pth', optimizer=None, epoch=None, path=None):
     """
     Save a torch model and optimizer state to file.
 
     :param model: Model to save.
     :type model: nn.Module
-    :param optimizer: Optimizer to save.
-    :type optimizer: torch.optim.Optimizer
-    :param epoch: Current epoch.
-    :type epoch: int
+    :param optimizer: Optimizer to save (optional).
+    :type optimizer: torch.optim.Optimizer or None
+    :param epoch: Current epoch (optional).
+    :type epoch: int or None
     :param path: Path to save the model and optimizer state.
     :type path: str
     """
-    torch.save({
-        'epoch': epoch,
-        'model_state_dict': model.state_dict(),
-        'optimizer_state_dict': optimizer.state_dict()
-    }, path)
+    if path is None:
+        # Get the directory of the current script or notebook
+        base_dir = Path(__file__).resolve().parent.parent
+        models_dir = base_dir / "data" / "models" 
+
+        if file_name is None: 
+            # Find highest index in directory and increment
+            files = [f for f in models_dir.iterdir() if f.is_file() and f.suffix == ".pth"]
+            if not files:
+                path = models_dir / f"model_00.pth"
+            else:
+                files.sort()
+                last_file = files[-1]
+                last_index = int(last_file.stem.split("_")[-1])
+                new_index = last_index + 1
+                path = models_dir / f"model_{new_index:02d}.pth"
+        else:
+            path = models_dir / file_name
+
+    checkpoint = {'model_state_dict': model.state_dict()}
+    
+    if optimizer is not None:
+        checkpoint['optimizer_state_dict'] = optimizer.state_dict()
+    
+    if epoch is not None:
+        checkpoint['epoch'] = epoch
+    
+    torch.save(checkpoint, path)
+    print(f"Model saved to {path}.")
+
+def load_model(model, file_name='decoder_00.pth', optimizer=None):
+    """
+    Load a torch model and optimizer state from file.
+
+    :param model: Model to load.
+    :type model: nn.Module
+    :param optimizer: Optimizer to load (optional).
+    :type optimizer: torch.optim.Optimizer or None
+    :param file_name: Name of the file/model to load.
+    :type file_name: str
+    :return: Loaded model, optimizer (if provided), and epoch (if provided).
+    :rtype: tuple
+    """
+    # Get the model directory path
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    model_dir = os.path.join(base_dir, "data/models")
+    path = os.path.join(model_dir, file_name)
+
+    checkpoint = torch.load(path)
+    model.load_state_dict(checkpoint['model_state_dict'])
+    
+    if optimizer is not None and 'optimizer_state_dict' in checkpoint:
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    
+    epoch = checkpoint.get('epoch', None)
+
+    print(f"Model loaded from {path}.")
+    return model, optimizer, epoch

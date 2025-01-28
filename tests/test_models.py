@@ -24,7 +24,7 @@ class TestModels(unittest.TestCase):
         model = CustomDecoderModel(config_path)
         ce_loss = CustomCELoss()
         lnloss = LengthNormLoss()
-        device = "mps"
+        device = model.config['device']
         model = model.to(device)
 
         for sample_batched in dataloader:

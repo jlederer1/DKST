@@ -2,6 +2,7 @@
 numpy==1.25.2 # required by torch 2.1.1+cu118
 tqdm==4.66.5
 matplotlib==3.9.2
+scipy
 
 # DKST_utils requirements (latest versions as of 2024-10-02)
 # Note: Install the appropriate version of PyTorch separately based on your system's capabilities, see README.
@@ -10,3 +11,4 @@ matplotlib==3.9.2
 
 sphinx
 sphinx-rtd-theme
+ipykernel

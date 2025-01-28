@@ -15,6 +15,7 @@ from dkst.utils.DKST_utils import *
 import numpy as np
 import torch
 from torch.utils.data import Dataset
+from pathlib import Path
 
 
 class DKSTDataset02(Dataset):
@@ -36,7 +37,8 @@ class DKSTDataset02(Dataset):
         # Dataset configuration 
         if not os.path.exists(config_path):
             raise FileNotFoundError(f"Config file not found at {config_path}.")
-        config = json.load(open(config_path, 'r'))
+        with open(config_path, 'r') as f:
+            config = json.load(f)
         if check_config(config):
             self.config = config
         
@@ -85,4 +87,52 @@ def collate_fn(batch):
     C = torch.stack(C)
     return S, input_seq, target_seq, C
 
+def save_dataset(dataset, path=None, data_type="train"):
+    """
+    Save a torch dataset to file.
 
+    :param dataset: Dataset to save.
+    :type dataset: torch.utils.data.Dataset
+    :param path: Path to save the dataset.
+    :type path: str
+    :param data_type: Type of the dataset (train, val, test).
+    :type data_type: str
+    """
+    if path is None:
+        # Get the directory of the current script or notebook
+        base_dir = Path(__file__).resolve().parent.parent
+        dataset_dir = base_dir / "data" / "datasets"
+
+        # Find highest index in directory and increment
+        files = [f for f in dataset_dir.iterdir() if f.is_file() and f.suffix == ".pth" and data_type in f.stem]
+        if not files:
+            path = dataset_dir / f"dataset_{data_type}_00.pth"
+        else:
+            files.sort()
+            last_file = files[-1]
+            last_index = int(last_file.stem.split("_")[-1])
+            new_index = last_index + 1
+            path = dataset_dir / f"dataset_{data_type}_{new_index:02d}.pth"
+
+    torch.save(dataset, path)
+    print(f"Dataset saved to {path}")
+
+def load_dataset(file_name):
+    """
+    Load a torch dataset from file.
+
+    :param file_name: Name of the file to load.
+    :type file_name: str
+
+    :return: The loaded dataset.
+    :rtype: torch.utils.data.Dataset
+    """
+    # Get the dataset directory path
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    dataset_dir = os.path.join(base_dir, "data/datasets")
+    path = os.path.join(dataset_dir, file_name)
+    
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"No such file or directory: '{path}'")
+    
+    return torch.load(path)

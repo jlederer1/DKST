@@ -2,7 +2,7 @@
 DKST_utils.py
 
 This module provides functions for tokenization, padding of knowledge structures/ surmise relations. 
-It also includes a method for aggregating response data by frequency and utility functions DKST datasets.
+It also includes a method for aggregating response data by frequency and utility functions for creating DKST datasets.
 """
 
 # Standard library imports

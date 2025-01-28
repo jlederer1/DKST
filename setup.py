@@ -18,11 +18,14 @@ setup(
     "torch",
     "numpy",
     "tqdm",
-    "matplotlib"
+    "matplotlib",
+    "scipy",
+
 ],
     extras_require={
         'dev': [
             'sphinx',
+            'ipykernel',
         ],
     },
     classifiers=[
