@@ -9,9 +9,7 @@ DKST Package Documentation
 The **DKST (Deep Knowledge Structure Theory)** package offers a suite of tools for generating, sampling, manipulating, and visualizing knowledge structures, 
 including quasi-orders and surmise relations. It combines elements of **Knowledge Structure Theory (KST)** and **Deep Learning (DL)** approaches for data-driven domain modelling.
 
-**Package version:**
-.. include:: ../../VERSION
-   :literal:
+**Package version:** |release|
 
 **GitHub Repository:**  
 `DKST on GitHub <https://github.com/jlederer1/DKST>`_
