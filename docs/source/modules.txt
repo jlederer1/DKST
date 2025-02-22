@@ -55,3 +55,11 @@ dkst.init_dataset module
    :members:
    :undoc-members:
    :show-inheritance:
+
+dkst.mcmc_sampling module
+=========================
+
+.. automodule:: dkst.mcmc_sampling
+   :members:
+   :undoc-members:
+   :show-inheritance:

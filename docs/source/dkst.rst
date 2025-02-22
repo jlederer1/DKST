@@ -7,4 +7,5 @@ dkst package
    dkst.utils
    dkst.dkst_datasets
    dkst.models
+   dkst.mcmc_sampling
 

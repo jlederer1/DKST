@@ -2,7 +2,7 @@ import unittest
 
 # from dkst.utils.set_operations import is_union_closed, is_intersection_closed, union_closure, intersection_closure, union_base, sort_K
 # from dkst.utils.relations import is_reflexive, is_antisymmetric, is_transitive
-from dkst.utils.KST_utils import implications_to_states, states_to_implications, generate_all_surmise_relations, num_prosets, num_posets
+from dkst.utils.KST_utils import implications_to_states, states_to_implications, generate_all_surmise_relations, num_prosets, num_posets, generate_all_knowledge_structures, is_union_closed
 from dkst.utils.KST_utils import sampling_quasiorders, sample_knowledge_structures, blim, sample_response_data
 
 import numpy as np
@@ -84,6 +84,39 @@ class TestKSTUtils(unittest.TestCase):
         data = sample_response_data(structures, num_samples=n_patterns)
         self.assertEqual(data[0].shape, (n_patterns,m), "Incorrect shape of response data")
         self.assertEqual(len(data), n_structures, "Incorrect shape of response data")
+
+    def test_generate_all_knowledge_structures(self):
+        # For n=2:
+        # Total families should be 2^(2^2-2) = 4 when union_closed is False or True.
+        structures_all = generate_all_knowledge_structures(2, union_closed=False)
+        self.assertEqual(len(structures_all), 4, "Incorrect total number of knowledge structures for n=2")
+        
+        structures_uc = generate_all_knowledge_structures(2, union_closed=True)
+        self.assertEqual(len(structures_uc), 4, "Incorrect number of union-closed knowledge structures for n=2")
+        for struct in structures_uc:
+            self.assertTrue(is_union_closed(struct), f"Structure {struct} is not union-closed")
+        
+        # For n=3:
+        # Total families should be 2^(2^3-2) = 64 when union_closed is False,
+        # and the Dedekind number (?) for n=3 is 45.
+        structures_all_n3 = generate_all_knowledge_structures(3, union_closed=False)
+        self.assertEqual(len(structures_all_n3), 64, "Incorrect total number of knowledge structures for n=3")
+        
+        structures_uc_n3 = generate_all_knowledge_structures(3, union_closed=True)
+        self.assertEqual(len(structures_uc_n3), 45, "Incorrect number of union-closed knowledge structures for n=3")
+        for struct in structures_uc_n3:
+            self.assertTrue(is_union_closed(struct), f"Structure {struct} is not union-closed")
+        
+        # For n=4:
+        # Total families should be 2^(2^4-2) = 16384 when union_closed is False,
+        # and for knowledge spaces 2271.
+        structures_all_n4 = generate_all_knowledge_structures(4, union_closed=False)
+        self.assertEqual(len(structures_all_n4), 16384, "Incorrect total number of knowledge structures for n=4")
+        
+        structures_uc_n4 = generate_all_knowledge_structures(4, union_closed=True)
+        self.assertEqual(len(structures_uc_n4), 2271, "Incorrect number of union-closed knowledge structures for n=4")
+        for struct in structures_uc_n4:
+            self.assertTrue(is_union_closed(struct), f"Structure {struct} is not union-closed")
 
 
 if __name__ == "__main__":

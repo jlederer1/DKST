@@ -21,11 +21,13 @@ To do:
 import random
 import time
 from itertools import product
+from itertools import chain, combinations
 import math
 # Local imports 
 from dkst.utils.relations import is_reflexive, is_transitive, is_antisymmetric, S_to_matrix
 from dkst.utils.set_operations import powerset_binary
 from dkst.utils.set_operations import K_to_matrix
+from dkst.utils.set_operations import is_union_closed, powerset, sort_K
 # Third-party imports
 import numpy as np
 from tqdm import tqdm
@@ -532,6 +534,50 @@ def generate_all_surmise_relations(n, antisymmetric=False):
             valid_matrices.append(matrix)
 
     return valid_matrices
+
+#experimental: 
+def generate_all_knowledge_structures(n, union_closed=False):
+    """
+    Generates all knowledge structures for a given domain size n.
+    
+    A knowledge structure is any family F ⊆ 2^Q (with Q a set of n items, represented in string notation)
+    that contains both the empty set ('') and the full domain (e.g., 'abcd' for Q = {a, b, c, d}).
+    If union_closed is True, only those families that are union‐closed are returned (i.e. the knowledge spaces).
+    
+    Note: The total number of families is 2^(2^n), so this function is feasible only for small n.
+    
+    :param n: Number of items in the domain.
+    :type n: int
+    :param union_closed: If True, only return union-closed knowledge structures. Default is False.
+    :type union_closed: bool
+    :return: A list of knowledge structures, each represented as a sorted list of subset strings.
+    :rtype: list[list[str]]
+    """
+    all_subsets = powerset(n)  # 2^n elements
+    full_state = ''.join([chr(97 + i) for i in range(n)])
+    total_families = 2 ** (len(all_subsets))  # total number of families: 2^(2^n)
+    
+    def all_families(iterable):
+        """
+        Generates all families (i.e., all subsets) of the given iterable.
+        """
+        s = list(iterable)
+        return chain.from_iterable(combinations(s, r) for r in range(len(s) + 1))
+    
+    structures = []
+    # Add tqdm progress bar only to the heavy inner iteration over families
+    for family in tqdm(all_families(all_subsets), total=total_families, desc="Generating families"):
+        F = list(family)
+        # Ensure F contains both the empty set and the full state.
+        if '' in F and full_state in F:
+            if union_closed:
+                # If union_closed is requested, filter out non-union-closed families.
+                if not is_union_closed(F):
+                    continue
+            # Sort F in canonical order using sort_K.
+            F_sorted = sort_K(F)
+            structures.append(F_sorted)
+    return structures
 
 def extend_quasi_order(base_quasi_order):
     """
