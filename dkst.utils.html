@@ -66,6 +66,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.compute_r"><code class="docutils literal notranslate"><span class="pre">compute_r()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.compute_rho"><code class="docutils literal notranslate"><span class="pre">compute_rho()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.extend_quasi_order"><code class="docutils literal notranslate"><span class="pre">extend_quasi_order()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.generate_all_knowledge_structures"><code class="docutils literal notranslate"><span class="pre">generate_all_knowledge_structures()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.generate_all_surmise_relations"><code class="docutils literal notranslate"><span class="pre">generate_all_surmise_relations()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.implications_to_states"><code class="docutils literal notranslate"><span class="pre">implications_to_states()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#dkst.utils.KST_utils.sample_knowledge_structures"><code class="docutils literal notranslate"><span class="pre">sample_knowledge_structures()</span></code></a></li>
@@ -105,6 +106,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="dkst.dkst_datasets.html">dkst.dkst_datasets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dkst.models.html">dkst.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.mcmc_sampling.html">dkst.mcmc_sampling</a></li>
 </ul>
 </li>
 </ul>
@@ -485,6 +487,30 @@ The implementation follows Ünlü, A., &amp; Schrepp, M. (2017). Techniques for 
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list[numpy.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.utils.KST_utils.generate_all_knowledge_structures">
+<span class="sig-prename descclassname"><span class="pre">dkst.utils.KST_utils.</span></span><span class="sig-name descname"><span class="pre">generate_all_knowledge_structures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">union_closed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/utils/KST_utils.html#generate_all_knowledge_structures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.utils.KST_utils.generate_all_knowledge_structures" title="Link to this definition"></a></dt>
+<dd><p>Generates all knowledge structures for a given domain size n.</p>
+<p>A knowledge structure is any family F ⊆ 2^Q (with Q a set of n items, represented in string notation)
+that contains both the empty set (‘’) and the full domain (e.g., ‘abcd’ for Q = {a, b, c, d}).
+If union_closed is True, only those families that are union‐closed are returned (i.e. the knowledge spaces).</p>
+<p>Note: The total number of families is 2^(2^n), so this function is feasible only for small n.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – Number of items in the domain.</p></li>
+<li><p><strong>union_closed</strong> (<em>bool</em>) – If True, only return union-closed knowledge structures. Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of knowledge structures, each represented as a sorted list of subset strings.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[list[str]]</p>
 </dd>
 </dl>
 </dd></dl>

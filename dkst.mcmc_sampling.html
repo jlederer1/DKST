@@ -1,0 +1,245 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dkst.mcmc_sampling &mdash; dkst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="dkst.models" href="dkst.models.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            dkst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="dkst.html">dkst package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dkst.utils.html">dkst.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.dkst_datasets.html">dkst.dkst_datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dkst.models.html">dkst.models</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">dkst.mcmc_sampling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.mcmc_sampling.candidate_moves_K"><code class="docutils literal notranslate"><span class="pre">candidate_moves_K()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.mcmc_sampling.permute_knowledge_space"><code class="docutils literal notranslate"><span class="pre">permute_knowledge_space()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.mcmc_sampling.sample_knowledge_space_mcmc"><code class="docutils literal notranslate"><span class="pre">sample_knowledge_space_mcmc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dkst.mcmc_sampling.sample_multiple_knowledge_spaces"><code class="docutils literal notranslate"><span class="pre">sample_multiple_knowledge_spaces()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">dkst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="dkst.html">dkst package</a></li>
+      <li class="breadcrumb-item active">dkst.mcmc_sampling</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/dkst.mcmc_sampling.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-dkst.mcmc_sampling">
+<span id="dkst-mcmc-sampling"></span><h1>dkst.mcmc_sampling<a class="headerlink" href="#module-dkst.mcmc_sampling" title="Link to this heading"></a></h1>
+<p>mcmc_sampling.py</p>
+<p>A knowledge space K is a union-closed family of subsets (in string notation) over a finite domain Q
+that contains both the empty set (‘’) and the full domain (e.g. ‘abcd’ for Q = {a,b,c,d}).
+Exhaustively enumerating such structures is intractable even for small domains.
+This module implements an MCMC procedure that operates on the full range of knowledge spaces.
+It uses elementary addition and removal moves, and a global extra permutation
+move (with probability 2%) that randomly permutes the items in K, thereby exploiting symmetry.</p>
+<p>For the addition and removal moves: q(K → K’) = 1/2 · 1/N(K),
+with N(K) being the number of valid candidate moves under the chosen move type.
+For a permutation move, since the permutation is chosen uniformly among n! possibilities,
+and its reverse is the inverse permutation, the proposal probability is symmetric,
+so the move is always accepted.</p>
+<dl class="simple">
+<dt>The overall move probabilities are thus:</dt><dd><ul class="simple">
+<li><p>Permutation move: 2% (extra)</p></li>
+<li><p>Addition move: 50%</p></li>
+<li><p>Removal move: 50%</p></li>
+</ul>
+</dd>
+</dl>
+<p>Author: Jakob Lederer
+Date: 2025-01-15</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.mcmc_sampling.candidate_moves_K">
+<span class="sig-prename descclassname"><span class="pre">dkst.mcmc_sampling.</span></span><span class="sig-name descname"><span class="pre">candidate_moves_K</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">move_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/mcmc_sampling.html#candidate_moves_K"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.mcmc_sampling.candidate_moves_K" title="Link to this definition"></a></dt>
+<dd><p>Determines candidate moves from the current knowledge space K based on the specified move type.</p>
+<p>For “Addition”: Iterates over each subset s from the complete powerset of Q (excluding the empty set)
+that is not already in K; if adding s to K directly yields a union‐closed family (without computing the closure)
+and the resulting family differs from K, then s is accepted as a candidate move.</p>
+<p>For “Removal”: Iterates over each subset s in K (excluding the empty set and the full state); if removing s from K
+directly yields a union‐closed family that is different from K, then s is accepted as a candidate move.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>K</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Current knowledge space represented as a sorted list of subset strings.</p></li>
+<li><p><strong>move_type</strong> (<em>str</em>) – Type of move to consider ()”Addition” or “Removal”).</p></li>
+<li><p><strong>domain</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Sorted list of items representing the domain Q.</p></li>
+<li><p><strong>full_state</strong> (<em>str</em>) – String representing the full domain (e.g., ‘abcd’ for Q = {a,b,c,d}).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of tuples (s, newK), where s is the candidate subset and newK is the resulting knowledge space (sorted).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[tuple[str, list[str]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.mcmc_sampling.permute_knowledge_space">
+<span class="sig-prename descclassname"><span class="pre">dkst.mcmc_sampling.</span></span><span class="sig-name descname"><span class="pre">permute_knowledge_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/mcmc_sampling.html#permute_knowledge_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.mcmc_sampling.permute_knowledge_space" title="Link to this definition"></a></dt>
+<dd><p>Performs a permutation move on the knowledge space K.</p>
+<p>A random permutation is drawn uniformly from all n! possibilities (with n = len(domain)). Each subset in K is
+re-labeled according to this permutation, and the resulting knowledge space is sorted canonically before being returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>K</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – The current knowledge space as a list of subset strings.</p></li>
+<li><p><strong>domain</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Sorted list of items representing the domain Q.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The permuted and sorted knowledge space.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.mcmc_sampling.sample_knowledge_space_mcmc">
+<span class="sig-prename descclassname"><span class="pre">dkst.mcmc_sampling.</span></span><span class="sig-name descname"><span class="pre">sample_knowledge_space_mcmc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial_K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perm_prob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/mcmc_sampling.html#sample_knowledge_space_mcmc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.mcmc_sampling.sample_knowledge_space_mcmc" title="Link to this definition"></a></dt>
+<dd><p>Performs MCMC sampling (Metropolis-Hastings) on the space of knowledge spaces (i.e., union-closed families).</p>
+<p>Starting from an initial union-closed knowledge space (including both the empty set and the full domain),
+the algorithm iteratively applies the following moves over T iterations:
+- With probability perm_prob, a permutation move is performed.
+- An “Addition” or “Removal” move is chosen at random.
+Candidate moves are generated using candidate_moves_K, and the acceptance probability is computed as
+A = min(1, N(K) / N(K’)), where N(K) is the number of valid candidate moves from K.
+Optionally, each accepted move can be logged.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initial_K</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Initial knowledge space as a sorted list of subset strings.</p></li>
+<li><p><strong>T</strong> (<em>int</em>) – Total number of MCMC iterations.</p></li>
+<li><p><strong>perm_prob</strong> (<em>float</em>) – Probability of performing a permutation move (default is 0.02).</p></li>
+<li><p><strong>log</strong> (<em>bool</em>) – If True, logs each accepted move to a file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The final knowledge space (sorted list of subset strings) obtained after T iterations.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dkst.mcmc_sampling.sample_multiple_knowledge_spaces">
+<span class="sig-prename descclassname"><span class="pre">dkst.mcmc_sampling.</span></span><span class="sig-name descname"><span class="pre">sample_multiple_knowledge_spaces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial_K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps_between</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perm_prob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dkst/mcmc_sampling.html#sample_multiple_knowledge_spaces"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dkst.mcmc_sampling.sample_multiple_knowledge_spaces" title="Link to this definition"></a></dt>
+<dd><p>Generates multiple knowledge space samples by repeatedly running the MCMC chain.</p>
+<p>Starting from the given initial knowledge space, the algorithm runs the MCMC procedure for a specified number
+of iterations (steps_between) between samples and collects a total of total_samples samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initial_K</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – The initial knowledge space as a sorted list of subset strings.</p></li>
+<li><p><strong>steps_between</strong> (<em>int</em>) – Number of MCMC iterations between successive samples.</p></li>
+<li><p><strong>total_samples</strong> (<em>int</em>) – Total number of knowledge space samples to collect.</p></li>
+<li><p><strong>perm_prob</strong> (<em>float</em>) – Probability of performing a permutation move (default is 0.02).</p></li>
+<li><p><strong>log</strong> (<em>bool</em>) – If True, logs each sampled knowledge space to a file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of knowledge space samples, each represented as a sorted list of subset strings.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[list[str]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dkst.models.html" class="btn btn-neutral float-left" title="dkst.models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jakob Lederer.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dkst.mcmc_sampling &mdash; dkst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            dkst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dkst.html">dkst package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">dkst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dkst.mcmc_sampling</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dkst.mcmc_sampling</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">mcmc_sampling.py</span>
+
+<span class="sd">A knowledge space K is a union-closed family of subsets (in string notation) over a finite domain Q </span>
+<span class="sd">that contains both the empty set (&#39;&#39;) and the full domain (e.g. &#39;abcd&#39; for Q = {a,b,c,d}).</span>
+<span class="sd">Exhaustively enumerating such structures is intractable even for small domains.</span>
+<span class="sd">This module implements an MCMC procedure that operates on the full range of knowledge spaces.</span>
+<span class="sd">It uses elementary addition and removal moves, and a global extra permutation </span>
+<span class="sd">move (with probability 2%) that randomly permutes the items in K, thereby exploiting symmetry.</span>
+
+<span class="sd">For the addition and removal moves: q(K → K&#39;) = 1/2 · 1/N(K),</span>
+<span class="sd">with N(K) being the number of valid candidate moves under the chosen move type.</span>
+<span class="sd">For a permutation move, since the permutation is chosen uniformly among n! possibilities,</span>
+<span class="sd">and its reverse is the inverse permutation, the proposal probability is symmetric,</span>
+<span class="sd">so the move is always accepted.</span>
+
+<span class="sd">The overall move probabilities are thus:</span>
+<span class="sd">    - Permutation move: 2% (extra)</span>
+<span class="sd">    - Addition move: 50%</span>
+<span class="sd">    - Removal move: 50%</span>
+
+<span class="sd">Author: Jakob Lederer</span>
+<span class="sd">Date: 2025-01-15</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Standard library imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="c1"># Local imports </span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dkst.utils.set_operations</span><span class="w"> </span><span class="kn">import</span> <span class="n">union_base</span><span class="p">,</span> <span class="n">union_closure</span><span class="p">,</span> <span class="n">sort_K</span><span class="p">,</span> <span class="n">powerset</span><span class="p">,</span> <span class="n">is_union_closed</span>
+
+<span class="c1"># Third-party imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+
+<div class="viewcode-block" id="candidate_moves_K">
+<a class="viewcode-back" href="../../dkst.mcmc_sampling.html#dkst.mcmc_sampling.candidate_moves_K">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">candidate_moves_K</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">move_type</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">full_state</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determines candidate moves from the current knowledge space K based on the specified move type.</span>
+<span class="sd">    </span>
+<span class="sd">    For &quot;Addition&quot;: Iterates over each subset s from the complete powerset of Q (excluding the empty set)</span>
+<span class="sd">    that is not already in K; if adding s to K directly yields a union‐closed family (without computing the closure)</span>
+<span class="sd">    and the resulting family differs from K, then s is accepted as a candidate move.</span>
+<span class="sd">    </span>
+<span class="sd">    For &quot;Removal&quot;: Iterates over each subset s in K (excluding the empty set and the full state); if removing s from K</span>
+<span class="sd">    directly yields a union‐closed family that is different from K, then s is accepted as a candidate move.</span>
+<span class="sd">    </span>
+<span class="sd">    :param K: Current knowledge space represented as a sorted list of subset strings.</span>
+<span class="sd">    :type K: list[str]</span>
+<span class="sd">    :param move_type: Type of move to consider ()&quot;Addition&quot; or &quot;Removal&quot;).</span>
+<span class="sd">    :type move_type: str</span>
+<span class="sd">    :param domain: Sorted list of items representing the domain Q.</span>
+<span class="sd">    :type domain: list[str]</span>
+<span class="sd">    :param full_state: String representing the full domain (e.g., &#39;abcd&#39; for Q = {a,b,c,d}).</span>
+<span class="sd">    :type full_state: str</span>
+
+<span class="sd">    :return: List of tuples (s, newK), where s is the candidate subset and newK is the resulting knowledge space (sorted).</span>
+<span class="sd">    :rtype: list[tuple[str, list[str]]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">candidates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">move_type</span> <span class="o">==</span> <span class="s2">&quot;Addition&quot;</span><span class="p">:</span>
+        <span class="n">all_states</span> <span class="o">=</span> <span class="n">powerset</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">domain</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">all_states</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">s</span> <span class="ow">and</span> <span class="n">s</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">K</span><span class="p">:</span>
+                <span class="n">newK</span> <span class="o">=</span> <span class="n">K</span> <span class="o">+</span> <span class="p">[</span><span class="n">s</span><span class="p">]</span>
+                <span class="c1"># Test if newK is union-closed</span>
+                <span class="k">if</span> <span class="n">is_union_closed</span><span class="p">(</span><span class="n">newK</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sort_K</span><span class="p">(</span><span class="n">newK</span><span class="p">)</span> <span class="o">!=</span> <span class="n">sort_K</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+                    <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">s</span><span class="p">,</span> <span class="n">sort_K</span><span class="p">(</span><span class="n">newK</span><span class="p">)))</span>
+    <span class="k">elif</span> <span class="n">move_type</span> <span class="o">==</span> <span class="s2">&quot;Removal&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">K</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">s</span> <span class="ow">and</span> <span class="n">s</span> <span class="o">!=</span> <span class="n">full_state</span><span class="p">:</span>
+                <span class="n">newK</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">K</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">s</span><span class="p">]</span>
+                <span class="c1"># Check if reduced set is union-closed</span>
+                <span class="k">if</span> <span class="n">is_union_closed</span><span class="p">(</span><span class="n">newK</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sort_K</span><span class="p">(</span><span class="n">newK</span><span class="p">)</span> <span class="o">!=</span> <span class="n">sort_K</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+                    <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">s</span><span class="p">,</span> <span class="n">sort_K</span><span class="p">(</span><span class="n">newK</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">candidates</span></div>
+
+
+<div class="viewcode-block" id="permute_knowledge_space">
+<a class="viewcode-back" href="../../dkst.mcmc_sampling.html#dkst.mcmc_sampling.permute_knowledge_space">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">permute_knowledge_space</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">domain</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Performs a permutation move on the knowledge space K.</span>
+<span class="sd">    </span>
+<span class="sd">    A random permutation is drawn uniformly from all n! possibilities (with n = len(domain)). Each subset in K is </span>
+<span class="sd">    re-labeled according to this permutation, and the resulting knowledge space is sorted canonically before being returned.</span>
+<span class="sd">    </span>
+<span class="sd">    :param K: The current knowledge space as a list of subset strings.</span>
+<span class="sd">    :type K: list[str]</span>
+<span class="sd">    :param domain: Sorted list of items representing the domain Q.</span>
+<span class="sd">    :type domain: list[str]</span>
+
+<span class="sd">    :return: The permuted and sorted knowledge space.</span>
+<span class="sd">    :rtype: list[str]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+    <span class="c1"># Generate a random permutation of indices [0, 1, ..., n-1]</span>
+    <span class="n">perm_indices</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">n</span><span class="p">)</span>
+    <span class="c1"># Build a mapping: old letter -&gt; new letter</span>
+    <span class="n">permuted_domain</span> <span class="o">=</span> <span class="p">[</span><span class="n">domain</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">perm_indices</span><span class="p">]</span>
+    <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span><span class="n">old</span><span class="p">:</span> <span class="n">new</span> <span class="k">for</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">permuted_domain</span><span class="p">)}</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">permute_subset</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="c1"># Permute each character according to the mapping and sort the result</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">mapping</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">s</span><span class="p">))</span>
+    
+    <span class="n">newK</span> <span class="o">=</span> <span class="p">[</span><span class="n">permute_subset</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">K</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">sort_K</span><span class="p">(</span><span class="n">newK</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="sample_knowledge_space_mcmc">
+<a class="viewcode-back" href="../../dkst.mcmc_sampling.html#dkst.mcmc_sampling.sample_knowledge_space_mcmc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sample_knowledge_space_mcmc</span><span class="p">(</span><span class="n">initial_K</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">perm_prob</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Performs MCMC sampling (Metropolis-Hastings) on the space of knowledge spaces (i.e., union-closed families).</span>
+
+<span class="sd">    Starting from an initial union-closed knowledge space (including both the empty set and the full domain),</span>
+<span class="sd">    the algorithm iteratively applies the following moves over T iterations:</span>
+<span class="sd">    - With probability perm_prob, a permutation move is performed.</span>
+<span class="sd">    - An &quot;Addition&quot; or &quot;Removal&quot; move is chosen at random.</span>
+<span class="sd">    Candidate moves are generated using candidate_moves_K, and the acceptance probability is computed as </span>
+<span class="sd">    A = min(1, N(K) / N(K&#39;)), where N(K) is the number of valid candidate moves from K.</span>
+<span class="sd">    Optionally, each accepted move can be logged.</span>
+
+<span class="sd">    :param initial_K: Initial knowledge space as a sorted list of subset strings.</span>
+<span class="sd">    :type initial_K: list[str]</span>
+<span class="sd">    :param T: Total number of MCMC iterations.</span>
+<span class="sd">    :type T: int</span>
+<span class="sd">    :param perm_prob: Probability of performing a permutation move (default is 0.02).</span>
+<span class="sd">    :type perm_prob: float</span>
+<span class="sd">    :param log: If True, logs each accepted move to a file.</span>
+<span class="sd">    :type log: bool</span>
+
+<span class="sd">    :return: The final knowledge space (sorted list of subset strings) obtained after T iterations.</span>
+<span class="sd">    :rtype: list[str]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="n">initial_K</span><span class="p">[:]</span>  <span class="c1"># current knowledge space</span>
+    <span class="n">domain</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">K</span><span class="p">)))</span>  <span class="c1"># domain Q</span>
+    <span class="n">full_state</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>  <span class="c1"># full state string</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">perm_prob</span><span class="p">:</span>
+            <span class="c1"># Permutation move</span>
+            <span class="n">K_new</span> <span class="o">=</span> <span class="n">permute_knowledge_space</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
+        
+        <span class="c1"># Decide between addition and removal moves equally and choose candidate</span>
+        <span class="n">move_choice</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">move_choice</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>           <span class="c1"># Todo: maybe merge addition/removal candidate moves then choose at random? </span>
+            <span class="n">move_type</span> <span class="o">=</span> <span class="s2">&quot;Addition&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">move_type</span> <span class="o">=</span> <span class="s2">&quot;Removal&quot;</span>
+        <span class="n">candidates_forward</span> <span class="o">=</span> <span class="n">candidate_moves_K</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">move_type</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">full_state</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">candidates_forward</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">candidate</span><span class="p">,</span> <span class="n">K_new</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">candidates_forward</span><span class="p">)</span>
+
+        <span class="c1"># Retrieve reverse move candidates and compute acceptance probability</span>
+        <span class="n">reverse_type</span> <span class="o">=</span> <span class="s2">&quot;Removal&quot;</span> <span class="k">if</span> <span class="n">move_type</span> <span class="o">==</span> <span class="s2">&quot;Addition&quot;</span> <span class="k">else</span> <span class="s2">&quot;Addition&quot;</span>
+        <span class="n">candidates_reverse</span> <span class="o">=</span> <span class="n">candidate_moves_K</span><span class="p">(</span><span class="n">K_new</span><span class="p">,</span> <span class="n">reverse_type</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">full_state</span><span class="p">)</span>
+        <span class="n">N_forward</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidates_forward</span><span class="p">)</span>
+        <span class="n">N_reverse</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidates_reverse</span><span class="p">)</span> <span class="k">if</span> <span class="n">candidates_reverse</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">N_forward</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">N_reverse</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N_forward</span> <span class="o">/</span> <span class="n">N_reverse</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">A</span><span class="p">:</span>
+            <span class="n">K</span> <span class="o">=</span> <span class="n">K_new</span>
+
+            <span class="c1"># logging the marcov chain</span>
+            <span class="k">if</span> <span class="n">log</span><span class="p">:</span>
+                <span class="n">log_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;../data/outputs&quot;</span><span class="p">,</span> <span class="s2">&quot;mcmc_sampling.log&quot;</span><span class="p">)</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_path</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># append mode</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Step </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">sort_K</span><span class="p">(</span><span class="n">K</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">K</span></div>
+
+
+<div class="viewcode-block" id="sample_multiple_knowledge_spaces">
+<a class="viewcode-back" href="../../dkst.mcmc_sampling.html#dkst.mcmc_sampling.sample_multiple_knowledge_spaces">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sample_multiple_knowledge_spaces</span><span class="p">(</span><span class="n">initial_K</span><span class="p">,</span> <span class="n">steps_between</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">total_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">perm_prob</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates multiple knowledge space samples by repeatedly running the MCMC chain.</span>
+<span class="sd">    </span>
+<span class="sd">    Starting from the given initial knowledge space, the algorithm runs the MCMC procedure for a specified number</span>
+<span class="sd">    of iterations (steps_between) between samples and collects a total of total_samples samples.</span>
+<span class="sd">    </span>
+<span class="sd">    :param initial_K: The initial knowledge space as a sorted list of subset strings.</span>
+<span class="sd">    :type initial_K: list[str]</span>
+<span class="sd">    :param steps_between: Number of MCMC iterations between successive samples.</span>
+<span class="sd">    :type steps_between: int</span>
+<span class="sd">    :param total_samples: Total number of knowledge space samples to collect.</span>
+<span class="sd">    :type total_samples: int</span>
+<span class="sd">    :param perm_prob: Probability of performing a permutation move (default is 0.02).</span>
+<span class="sd">    :type perm_prob: float</span>
+<span class="sd">    :param log: If True, logs each sampled knowledge space to a file.</span>
+<span class="sd">    :type log: bool</span>
+
+<span class="sd">    :return: A list of knowledge space samples, each represented as a sorted list of subset strings.</span>
+<span class="sd">    :rtype: list[list[str]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">current_K</span> <span class="o">=</span> <span class="n">initial_K</span><span class="p">[:]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">total_samples</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Sampling knowledge spaces&quot;</span><span class="p">):</span>
+        <span class="n">current_K</span> <span class="o">=</span> <span class="n">sample_knowledge_space_mcmc</span><span class="p">(</span><span class="n">current_K</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">steps_between</span><span class="p">,</span> <span class="n">perm_prob</span><span class="o">=</span><span class="n">perm_prob</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">)</span>
+        <span class="n">samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_K</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="n">total_samples</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sample </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">sort_K</span><span class="p">(</span><span class="n">current_K</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">samples</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jakob Lederer.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

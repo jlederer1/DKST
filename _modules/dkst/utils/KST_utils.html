@@ -92,11 +92,13 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">product</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">chain</span><span class="p">,</span> <span class="n">combinations</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="c1"># Local imports </span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dkst.utils.relations</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_reflexive</span><span class="p">,</span> <span class="n">is_transitive</span><span class="p">,</span> <span class="n">is_antisymmetric</span><span class="p">,</span> <span class="n">S_to_matrix</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dkst.utils.set_operations</span><span class="w"> </span><span class="kn">import</span> <span class="n">powerset_binary</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dkst.utils.set_operations</span><span class="w"> </span><span class="kn">import</span> <span class="n">K_to_matrix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dkst.utils.set_operations</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_union_closed</span><span class="p">,</span> <span class="n">powerset</span><span class="p">,</span> <span class="n">sort_K</span>
 <span class="c1"># Third-party imports</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
@@ -629,6 +631,53 @@
             <span class="n">valid_matrices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">valid_matrices</span></div>
+
+
+<span class="c1">#experimental: </span>
+<div class="viewcode-block" id="generate_all_knowledge_structures">
+<a class="viewcode-back" href="../../../dkst.utils.html#dkst.utils.KST_utils.generate_all_knowledge_structures">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_all_knowledge_structures</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">union_closed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates all knowledge structures for a given domain size n.</span>
+<span class="sd">    </span>
+<span class="sd">    A knowledge structure is any family F ⊆ 2^Q (with Q a set of n items, represented in string notation)</span>
+<span class="sd">    that contains both the empty set (&#39;&#39;) and the full domain (e.g., &#39;abcd&#39; for Q = {a, b, c, d}).</span>
+<span class="sd">    If union_closed is True, only those families that are union‐closed are returned (i.e. the knowledge spaces).</span>
+<span class="sd">    </span>
+<span class="sd">    Note: The total number of families is 2^(2^n), so this function is feasible only for small n.</span>
+<span class="sd">    </span>
+<span class="sd">    :param n: Number of items in the domain.</span>
+<span class="sd">    :type n: int</span>
+<span class="sd">    :param union_closed: If True, only return union-closed knowledge structures. Default is False.</span>
+<span class="sd">    :type union_closed: bool</span>
+<span class="sd">    :return: A list of knowledge structures, each represented as a sorted list of subset strings.</span>
+<span class="sd">    :rtype: list[list[str]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">all_subsets</span> <span class="o">=</span> <span class="n">powerset</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>  <span class="c1"># 2^n elements</span>
+    <span class="n">full_state</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">chr</span><span class="p">(</span><span class="mi">97</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)])</span>
+    <span class="n">total_families</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_subsets</span><span class="p">))</span>  <span class="c1"># total number of families: 2^(2^n)</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">all_families</span><span class="p">(</span><span class="n">iterable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates all families (i.e., all subsets) of the given iterable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">combinations</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    
+    <span class="n">structures</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Add tqdm progress bar only to the heavy inner iteration over families</span>
+    <span class="k">for</span> <span class="n">family</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">all_families</span><span class="p">(</span><span class="n">all_subsets</span><span class="p">),</span> <span class="n">total</span><span class="o">=</span><span class="n">total_families</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Generating families&quot;</span><span class="p">):</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">family</span><span class="p">)</span>
+        <span class="c1"># Ensure F contains both the empty set and the full state.</span>
+        <span class="k">if</span> <span class="s1">&#39;&#39;</span> <span class="ow">in</span> <span class="n">F</span> <span class="ow">and</span> <span class="n">full_state</span> <span class="ow">in</span> <span class="n">F</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">union_closed</span><span class="p">:</span>
+                <span class="c1"># If union_closed is requested, filter out non-union-closed families.</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_union_closed</span><span class="p">(</span><span class="n">F</span><span class="p">):</span>
+                    <span class="k">continue</span>
+            <span class="c1"># Sort F in canonical order using sort_K.</span>
+            <span class="n">F_sorted</span> <span class="o">=</span> <span class="n">sort_K</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
+            <span class="n">structures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">F_sorted</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">structures</span></div>
 
 
 <div class="viewcode-block" id="extend_quasi_order">
